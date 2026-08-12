@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored shadcn/magicui-style registry components: dropped in verbatim
+    // from their upstream source, not held to this project's lint rules.
+    "src/generated/prisma/**",
+    "src/registry/**",
   ]),
 ]);
 

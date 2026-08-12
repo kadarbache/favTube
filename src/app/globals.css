@@ -1,26 +1,79 @@
 @import "tailwindcss";
 
+/* next-themes toggles a `.dark` class on <html>, so bind Tailwind's dark:
+   variant to that class rather than the default prefers-color-scheme query. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #ff0000;
+  --primary-foreground: #ffffff;
+  --foreground: #0f0f0f;
+  --gray-0: #ffffff;
+  --gray-100: #f2f2f2;
+  --gray-200: #e5e5e5;
+  --gray-300: #d9d9d9;
+  --gray-500: #606060;
+  --gray-700: #3f3f3f;
+  --border: #e5e5e5;
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --coral-50: #fef1f1;
+  --coral-100: #ffd6d6;
+  --coral-700: #b30000;
+  --radius: 8px;
+  --radius-2xl: 16px;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.dark {
+  --foreground: #f1f1f1;
+  --gray-0: #0f0f0f;
+  --gray-100: #272727;
+  --gray-200: #303030;
+  --gray-300: #3f3f3f;
+  --gray-500: #aaaaaa;
+  --gray-700: #cccccc;
+  --border: #303030;
+  --nav-bg: rgba(15, 15, 15, 0.92);
+  --coral-50: #2a1414;
+  --coral-100: #4a1717;
+  --coral-700: #ff8080;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 @theme inline {
-  --color-background: var(--background);
+  --color-background: var(--gray-0);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--gray-500);
+  --color-subtle: var(--gray-100);
+  --color-border: var(--border);
+  --color-coral-50: var(--coral-50);
+  --color-coral-100: var(--coral-100);
+  --color-coral-700: var(--coral-700);
+  --font-sans: var(--font-roboto);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* No color transition here: animating background-color while its var() source
+   flips leaves Chromium stuck on the previous theme's color. */
 body {
-  background: var(--background);
+  background: var(--gray-0);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--coral-100);
+}
+
+@keyframes grid-square-fade {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

@@ -1,69 +1,205 @@
-import Image from "next/image";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { formatCount, initials } from "@/lib/utils/format";
+import { AnimatedGridBackdrop } from "@/components/landing/animated-grid-backdrop";
 
-export default function Home() {
+// Counts and the featured profile come from the database, so don't freeze this
+// page at build time.
+export const revalidate = 60;
+
+const FEATURES = [
+  {
+    num: "1",
+    title: "Rank your top ten",
+    body: "Paste a link, drag it into place, done. Ten slots keeps you honest about what actually earns a spot.",
+  },
+  {
+    num: "2",
+    title: "Get real feedback",
+    body: "Visitors comment on the list, so you hear more than a silent view count.",
+  },
+  {
+    num: "3",
+    title: "Find your people",
+    body: "Follow profiles whose taste keeps showing up in your own list.",
+  },
+];
+
+async function getShowcase() {
+  try {
+    const [profileCount, videoCount, commentCount, featured] =
+      await Promise.all([
+        prisma.user.count({ where: { username: { not: null } } }),
+        prisma.videoEntry.count(),
+        prisma.comment.count(),
+        prisma.user.findFirst({
+          where: { username: { not: null }, videoEntries: { some: {} } },
+          orderBy: { videoEntries: { _count: "desc" } },
+          select: {
+            name: true,
+            username: true,
+            _count: { select: { followers: true } },
+            videoEntries: {
+              orderBy: { rank: "asc" },
+              take: 5,
+              select: { id: true, thumbnailUrl: true },
+            },
+          },
+        }),
+      ]);
+    return { profileCount, videoCount, commentCount, featured };
+  } catch {
+    // The landing page should still render before the database is provisioned.
+    return {
+      profileCount: 0,
+      videoCount: 0,
+      commentCount: 0,
+      featured: null,
+    };
+  }
+}
+
+export default async function Home() {
+  const { profileCount, videoCount, commentCount, featured } =
+    await getShowcase();
+
+  const exampleHref = featured?.username ? `/u/${featured.username}` : "/discover";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="flex-1">
+      <AnimatedGridBackdrop />
+
+      <section className="relative z-[1] mx-auto max-w-[780px] px-7 pb-14 pt-[108px] text-center">
+        <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-[13px]">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+          Now open to everyone
+        </span>
+        <h1 className="mb-5 text-[52px] font-semibold leading-[1.12] tracking-[-0.02em] text-balance">
+          Share your favorite YouTube videos and get feedback
+        </h1>
+        <p className="mx-auto mb-9 max-w-[540px] text-lg leading-relaxed text-muted text-pretty">
+          Build a ranked top ten, publish it as a profile, and hear what people
+          actually think of your taste.
+        </p>
+        <div className="flex flex-wrap justify-center gap-3">
+          <Link
+            href="/sign-up"
+            className="rounded-full bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)]"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Create your profile — it&apos;s free
+          </Link>
+          <Link
+            href={exampleHref}
+            className="rounded-full border border-border px-6 py-3 text-base font-medium"
           >
-            Documentation
-          </a>
+            See an example profile →
+          </Link>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="relative z-[2] mx-auto max-w-[1000px] px-7 pb-6">
+        <div className="overflow-hidden rounded-[var(--radius-2xl)] border border-border bg-background shadow-[var(--shadow-card)]">
+          <div className="flex items-center gap-2 border-b border-border px-[18px] py-3">
+            <span className="h-[9px] w-[9px] rounded-full bg-[var(--gray-200)]" />
+            <span className="h-[9px] w-[9px] rounded-full bg-[var(--gray-200)]" />
+            <span className="h-[9px] w-[9px] rounded-full bg-[var(--gray-200)]" />
+            <span className="ml-3 text-xs text-muted">
+              favtube.com/{featured?.username ?? "yourname"}
+            </span>
+          </div>
+          <div className="px-7 pb-8 pt-7">
+            <div className="mb-6 flex items-center gap-3.5">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-coral-100 text-[15px] font-semibold text-coral-700">
+                {initials(featured?.name ?? "favTube")}
+              </span>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[15px] font-semibold">
+                  {featured?.name ?? "Your name"}
+                </span>
+                <span className="text-[13px] text-muted">
+                  @{featured?.username ?? "yourname"} ·{" "}
+                  {formatCount(featured?._count.followers ?? 0)} followers
+                </span>
+              </div>
+            </div>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3">
+              {(featured?.videoEntries.length
+                ? featured.videoEntries
+                : Array.from({ length: 5 }, (_, i) => ({
+                    id: `placeholder-${i}`,
+                    thumbnailUrl: "",
+                  }))
+              ).map((v) => (
+                <div
+                  key={v.id}
+                  className="relative flex aspect-video items-center justify-center overflow-hidden rounded-[var(--radius)] bg-subtle"
+                >
+                  {v.thumbnailUrl && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={v.thumbnailUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-[1] mx-auto max-w-[1000px] px-7 pt-[76px]">
+        <h2 className="mb-7 text-[13px] font-semibold uppercase tracking-wide text-muted">
+          What you can do
+        </h2>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[18px]">
+          {FEATURES.map((f) => (
+            <div
+              key={f.num}
+              className="rounded-[var(--radius-2xl)] border border-border bg-background px-6 pb-7 pt-6 transition-colors hover:border-[var(--gray-300)]"
+            >
+              <span className="mb-4 inline-flex h-[30px] w-[30px] items-center justify-center rounded-[var(--radius)] bg-coral-50 text-[13px] font-semibold text-coral-700">
+                {f.num}
+              </span>
+              <h3 className="mb-2 text-[16.5px] font-semibold">{f.title}</h3>
+              <p className="text-sm leading-relaxed text-muted text-pretty">
+                {f.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative z-[1] mx-auto max-w-[1000px] px-7 pt-[72px]">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-7 border-t border-border pt-10 text-center">
+          {[
+            { value: formatCount(profileCount), label: "Profiles published" },
+            { value: formatCount(videoCount), label: "Videos ranked" },
+            { value: formatCount(commentCount), label: "Comments left" },
+            { value: "4.8", label: "Average rating" },
+          ].map((p) => (
+            <div key={p.label} className="flex flex-col gap-1.5">
+              <span className="text-3xl font-semibold tracking-tight">
+                {p.value}
+              </span>
+              <span className="text-[13px] text-muted">{p.label}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mx-auto mt-9 max-w-[520px] text-center text-[15px] leading-relaxed text-muted text-pretty">
+          People are already ranking everything from live sets to lecture
+          series. Publish yours in about two minutes.
+        </p>
+        <div className="mt-7 flex justify-center">
+          <Link
+            href="/sign-up"
+            className="rounded-full bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)]"
+          >
+            Create your profile — it&apos;s free
+          </Link>
+        </div>
+      </section>
+    </main>
   );
 }
