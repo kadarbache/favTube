@@ -20,9 +20,7 @@ function NavItem({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-2 whitespace-nowrap px-5 py-1 text-[15px] transition-colors hover:text-foreground ${
-        active ? "font-semibold text-foreground" : "font-medium text-muted"
-      }`}
+      className="flex items-center gap-2 whitespace-nowrap px-5 py-1 text-[15px] font-black text-foreground"
     >
       <span className={active ? "text-primary" : ""}>{icon}</span>
       {children}
@@ -114,7 +112,7 @@ export function SiteNav() {
             onClick={() =>
               setTheme((resolvedTheme ?? theme) === "dark" ? "light" : "dark")
             }
-            className="flex items-center gap-2 whitespace-nowrap px-5 py-1 text-[15px] font-medium text-muted transition-colors hover:text-foreground"
+            className="flex items-center gap-2 whitespace-nowrap px-5 py-1 text-[15px] font-black text-foreground"
           >
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
@@ -131,7 +129,7 @@ export function SiteNav() {
                 router.push("/");
                 router.refresh();
               }}
-              className="flex items-center gap-2 whitespace-nowrap px-5 py-1 text-[15px] font-medium text-muted transition-colors hover:text-foreground"
+              className="flex items-center gap-2 whitespace-nowrap px-5 py-1 text-[15px] font-black text-foreground"
             >
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -147,7 +145,7 @@ export function SiteNav() {
           {!user && (
             <Link
               href="/sign-in"
-              className="inline-flex h-[34px] items-center gap-2 rounded-[var(--radius)] bg-primary px-4 text-[13px] font-medium text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-hover)]"
+              className="inline-flex h-[34px] items-center gap-2 rounded-[var(--radius)] bg-primary px-4 text-[13px] font-black text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-hover)]"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
