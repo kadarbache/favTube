@@ -71,7 +71,7 @@ function SortableRow({
         {index + 1}
       </span>
 
-      <div className="relative h-[45px] w-20 shrink-0 overflow-hidden rounded-[4px] bg-subtle">
+      <div className="relative h-[45px] w-20 shrink-0 overflow-hidden rounded-[var(--radius)] bg-subtle">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={video.thumbnailUrl}
@@ -79,7 +79,7 @@ function SortableRow({
           className="h-full w-full object-cover"
         />
         {duration && (
-          <span className="absolute bottom-0.5 right-0.5 rounded-[2px] bg-black/80 px-1 text-[9px] font-medium text-white">
+          <span className="absolute bottom-0.5 right-0.5 rounded-[3px] bg-black/80 px-1 text-[9px] font-medium text-white">
             {duration}
           </span>
         )}
@@ -179,7 +179,7 @@ export function ManageTopTen({ initialVideos }: { initialVideos: VideoCardData[]
         <button
           type="submit"
           disabled={full || pending || !url.trim()}
-          className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-[var(--primary-foreground)] disabled:opacity-50"
+          className="rounded-[var(--radius)] bg-primary px-5 py-2.5 text-sm font-medium text-[var(--primary-foreground)] disabled:opacity-50"
         >
           {pending ? "Adding…" : "Add"}
         </button>

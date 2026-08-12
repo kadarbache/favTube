@@ -19,8 +19,11 @@
   --coral-50: #fef1f1;
   --coral-100: #ffd6d6;
   --coral-700: #b30000;
-  --radius: 8px;
+  /* Cudemy DS radii. --radius is the base: buttons, inputs, video thumbnails,
+     feature-number chips. --radius-2xl is the largest card radius. */
+  --radius: 0.325rem;
   --radius-2xl: 16px;
+  --radius-full: 9999px;
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 

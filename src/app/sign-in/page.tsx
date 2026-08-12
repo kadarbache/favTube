@@ -41,7 +41,7 @@ export default function SignInPage() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-zinc-200 px-3.5 py-2.5 text-sm outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900"
+            className="w-full rounded-[var(--radius)] border border-zinc-200 px-3.5 py-2.5 text-sm outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900"
           />
           <input
             type="password"
@@ -49,13 +49,13 @@ export default function SignInPage() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-zinc-200 px-3.5 py-2.5 text-sm outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900"
+            className="w-full rounded-[var(--radius)] border border-zinc-200 px-3.5 py-2.5 text-sm outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900"
           />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-60"
+            className="w-full rounded-[var(--radius)] bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-60"
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>

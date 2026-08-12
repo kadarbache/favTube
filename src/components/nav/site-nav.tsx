@@ -55,10 +55,10 @@ export function SiteNav() {
     >
       <div className="mx-auto grid max-w-[1200px] grid-cols-[1fr_auto_1fr] items-center gap-5 px-7 py-4">
         <Link href="/" className="flex items-center gap-2.5 justify-self-start">
-          <span className="flex h-5 w-[30px] shrink-0 flex-col justify-center gap-[3px] rounded-md bg-[#d2690a] pl-[7px]">
-            <span className="h-[2.5px] w-4 rounded-sm bg-[#f2f2f2]" />
-            <span className="h-[2.5px] w-[11px] rounded-sm bg-[#f2f2f2]" />
-            <span className="h-[2.5px] w-1.5 rounded-sm bg-[#f2f2f2]" />
+          <span className="flex h-5 w-[30px] shrink-0 flex-col justify-center gap-[3px] rounded-[6px] bg-[#d2690a] pl-[7px]">
+            <span className="h-[2.5px] w-4 rounded-[2px] bg-[#f2f2f2]" />
+            <span className="h-[2.5px] w-[11px] rounded-[2px] bg-[#f2f2f2]" />
+            <span className="h-[2.5px] w-1.5 rounded-[2px] bg-[#f2f2f2]" />
           </span>
           <span className="text-[17px] font-bold tracking-tight">favTube</span>
         </Link>
@@ -113,7 +113,7 @@ export function SiteNav() {
                 href={username ? `/u/${username}` : "/"}
                 className="flex items-center gap-2"
               >
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-coral-100 text-[12px] font-semibold text-coral-700">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-[50%] bg-coral-100 text-[12px] font-semibold text-coral-700">
                   {initials(user.name ?? "?")}
                 </span>
               </Link>
@@ -132,7 +132,7 @@ export function SiteNav() {
           ) : (
             <Link
               href="/sign-in"
-              className="inline-flex h-[34px] items-center gap-2 rounded-full bg-primary px-4 text-[13px] font-medium text-[var(--primary-foreground)]"
+              className="inline-flex h-[34px] items-center gap-2 rounded-[var(--radius)] bg-primary px-4 text-[13px] font-medium text-[var(--primary-foreground)]"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />

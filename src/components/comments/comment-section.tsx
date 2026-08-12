@@ -72,7 +72,7 @@ export function CommentSection({
 
       {signedIn ? (
         <div className="mb-8 flex items-start gap-3">
-          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-subtle text-[12.5px] font-semibold text-[var(--gray-700)]">
+          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[50%] bg-subtle text-[12.5px] font-semibold text-[var(--gray-700)]">
             {viewerName ? initials(viewerName) : "You"}
           </span>
           <div className="flex flex-1 flex-wrap gap-2.5">
@@ -89,7 +89,7 @@ export function CommentSection({
               type="button"
               onClick={onPost}
               disabled={pending || !draft.trim()}
-              className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-[var(--primary-foreground)] disabled:opacity-50"
+              className="rounded-[var(--radius)] bg-primary px-5 py-2.5 text-sm font-medium text-[var(--primary-foreground)] disabled:opacity-50"
             >
               Post
             </button>
@@ -111,7 +111,7 @@ export function CommentSection({
         <div className="flex flex-col gap-6">
           {comments.map((c) => (
             <div key={c.id} className="flex items-start gap-3">
-              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-subtle text-[12.5px] font-semibold text-[var(--gray-700)]">
+              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[50%] bg-subtle text-[12.5px] font-semibold text-[var(--gray-700)]">
                 {initials(c.authorName)}
               </span>
               <div className="flex flex-1 flex-col gap-1.5">

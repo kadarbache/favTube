@@ -57,7 +57,7 @@ export default async function DiscoverPage() {
               className="flex flex-col gap-3.5 rounded-[var(--radius-2xl)] border border-border p-4 transition-colors hover:border-[var(--gray-300)]"
             >
               <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-coral-100 text-[13px] font-semibold text-coral-700">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[50%] bg-coral-100 text-[13px] font-semibold text-coral-700">
                   {initials(p.name)}
                 </span>
                 <div className="flex min-w-0 flex-col">
@@ -74,7 +74,7 @@ export default async function DiscoverPage() {
                 {p.videoEntries.map((v) => (
                   <div
                     key={v.id}
-                    className="aspect-video overflow-hidden rounded-[4px] bg-subtle"
+                    className="aspect-video overflow-hidden rounded-[var(--radius)] bg-subtle"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img

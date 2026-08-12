@@ -70,8 +70,8 @@ export default async function Home() {
       <AnimatedGridBackdrop />
 
       <section className="relative z-[1] mx-auto max-w-[780px] px-7 pb-14 pt-[108px] text-center">
-        <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-[13px]">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+        <span className="mb-7 inline-flex items-center gap-2 rounded-[var(--radius-full)] border border-border px-3 py-1 text-[13px]">
+          <span className="h-1.5 w-1.5 rounded-[50%] bg-primary" />
           Now open to everyone
         </span>
         <h1 className="mb-5 text-[52px] font-semibold leading-[1.12] tracking-[-0.02em] text-balance">
@@ -84,13 +84,13 @@ export default async function Home() {
         <div className="flex flex-wrap justify-center gap-3">
           <Link
             href="/sign-up"
-            className="rounded-full bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)]"
+            className="rounded-[var(--radius)] bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)]"
           >
             Create your profile — it&apos;s free
           </Link>
           <Link
             href={exampleHref}
-            className="rounded-full border border-border px-6 py-3 text-base font-medium"
+            className="rounded-[var(--radius)] border border-border px-6 py-3 text-base font-medium"
           >
             See an example profile →
           </Link>
@@ -100,16 +100,16 @@ export default async function Home() {
       <section className="relative z-[2] mx-auto max-w-[1000px] px-7 pb-6">
         <div className="overflow-hidden rounded-[var(--radius-2xl)] border border-border bg-background shadow-[var(--shadow-card)]">
           <div className="flex items-center gap-2 border-b border-border px-[18px] py-3">
-            <span className="h-[9px] w-[9px] rounded-full bg-[var(--gray-200)]" />
-            <span className="h-[9px] w-[9px] rounded-full bg-[var(--gray-200)]" />
-            <span className="h-[9px] w-[9px] rounded-full bg-[var(--gray-200)]" />
+            <span className="h-[9px] w-[9px] rounded-[50%] bg-[var(--gray-200)]" />
+            <span className="h-[9px] w-[9px] rounded-[50%] bg-[var(--gray-200)]" />
+            <span className="h-[9px] w-[9px] rounded-[50%] bg-[var(--gray-200)]" />
             <span className="ml-3 text-xs text-muted">
               favtube.com/{featured?.username ?? "yourname"}
             </span>
           </div>
           <div className="px-7 pb-8 pt-7">
             <div className="mb-6 flex items-center gap-3.5">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-coral-100 text-[15px] font-semibold text-coral-700">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-[50%] bg-coral-100 text-[15px] font-semibold text-coral-700">
                 {initials(featured?.name ?? "favTube")}
               </span>
               <div className="flex flex-col gap-0.5">
@@ -194,7 +194,7 @@ export default async function Home() {
         <div className="mt-7 flex justify-center">
           <Link
             href="/sign-up"
-            className="rounded-full bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)]"
+            className="rounded-[var(--radius)] bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)]"
           >
             Create your profile — it&apos;s free
           </Link>

@@ -38,7 +38,7 @@ export function FollowButton({
       <button
         type="button"
         onClick={onClick}
-        className={`rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
+        className={`rounded-[var(--radius)] px-5 py-2.5 text-sm font-medium transition-colors ${
           optimistic
             ? "bg-subtle text-foreground"
             : "bg-primary text-[var(--primary-foreground)]"
