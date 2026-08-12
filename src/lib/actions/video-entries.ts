@@ -9,6 +9,7 @@ import {
   YoutubeLookupError,
 } from "@/lib/youtube";
 import { MAX_ENTRIES, type ActionResult } from "@/lib/constants";
+import type { VideoCardData } from "@/components/profile/video-card";
 
 async function revalidateOwner(userId: string) {
   const user = await prisma.user.findUnique({
@@ -18,7 +19,9 @@ async function revalidateOwner(userId: string) {
   if (user?.username) revalidatePath(`/u/${user.username}`);
 }
 
-export async function addVideoEntry(rawUrl: string): Promise<ActionResult> {
+export async function addVideoEntry(
+  rawUrl: string,
+): Promise<{ ok: true; video: VideoCardData } | { ok: false; error: string }> {
   let userId: string;
   try {
     userId = await requireUserId();
@@ -52,13 +55,14 @@ export async function addVideoEntry(rawUrl: string): Promise<ActionResult> {
     };
   }
 
+  let created;
   try {
-    await prisma.$transaction(async (tx) => {
+    created = await prisma.$transaction(async (tx) => {
       const count = await tx.videoEntry.count({ where: { userId } });
       if (count >= MAX_ENTRIES) {
         throw new Error(`Your top ten is full — remove one to add another.`);
       }
-      await tx.videoEntry.create({
+      return tx.videoEntry.create({
         data: { userId, rank: count + 1, ...metadata },
       });
     });
@@ -71,7 +75,19 @@ export async function addVideoEntry(rawUrl: string): Promise<ActionResult> {
   }
 
   await revalidateOwner(userId);
-  return { ok: true };
+  return {
+    ok: true,
+    video: {
+      id: created.id,
+      rank: created.rank,
+      youtubeVideoId: created.youtubeVideoId,
+      url: created.url,
+      title: created.title,
+      channelName: created.channelName,
+      thumbnailUrl: created.thumbnailUrl,
+      durationSeconds: created.durationSeconds,
+    },
+  };
 }
 
 export async function removeVideoEntry(entryId: string): Promise<ActionResult> {

@@ -41,6 +41,7 @@ function SortableRow({
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: video.id });
   const duration = formatDuration(video.durationSeconds);
+  const [thumbLoaded, setThumbLoaded] = useState(false);
 
   return (
     <div
@@ -72,11 +73,17 @@ function SortableRow({
       </span>
 
       <div className="relative h-[45px] w-20 shrink-0 overflow-hidden rounded-[var(--radius)] bg-subtle">
+        {!thumbLoaded && (
+          <div className="absolute inset-0 animate-pulse bg-[var(--gray-200)]" />
+        )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={video.thumbnailUrl}
           alt=""
-          className="h-full w-full object-cover"
+          onLoad={() => setThumbLoaded(true)}
+          className={`h-full w-full object-cover transition-opacity ${
+            thumbLoaded ? "opacity-100" : "opacity-0"
+          }`}
         />
         {duration && (
           <span className="absolute bottom-0.5 right-0.5 rounded-[3px] bg-black/80 px-1 text-[9px] font-medium text-white">
@@ -145,6 +152,7 @@ export function ManageTopTen({ initialVideos }: { initialVideos: VideoCardData[]
       const result = await addVideoEntry(value);
       if (result.ok) {
         setUrl("");
+        setVideos((prev) => [...prev, result.video]);
       } else {
         setError(result.error);
       }
