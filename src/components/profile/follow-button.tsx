@@ -51,8 +51,8 @@ export function FollowButton({
         onClick={onClick}
         className={`rounded-[var(--radius)] px-5 py-2.5 text-sm font-medium transition-colors ${
           signedIn && optimistic
-            ? "bg-subtle text-foreground"
-            : "bg-primary text-[var(--primary-foreground)]"
+            ? "bg-subtle text-foreground hover:bg-[var(--gray-200)]"
+            : "bg-primary text-[var(--primary-foreground)] hover:bg-[var(--primary-hover)]"
         }`}
       >
         {signedIn && optimistic ? "Following" : "Follow"}

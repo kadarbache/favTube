@@ -7,6 +7,7 @@
 :root {
   --primary: #ff0000;
   --primary-foreground: #ffffff;
+  --primary-hover: #cc0000;
   --foreground: #0f0f0f;
   --gray-0: #ffffff;
   --gray-100: #f2f2f2;
@@ -28,6 +29,9 @@
 }
 
 .dark {
+  /* Lighter rather than darker on hover: a darker red would lose contrast
+     against the dark surface instead of reading as feedback. */
+  --primary-hover: #ff3333;
   --foreground: #f1f1f1;
   --gray-0: #0f0f0f;
   --gray-100: #272727;
@@ -57,12 +61,27 @@
   --font-sans: var(--font-roboto), "Helvetica Neue", Arial, sans-serif;
 }
 
-/* No color transition here: animating background-color while its var() source
-   flips leaves Chromium stuck on the previous theme's color. */
+/* Tailwind v4's preflight leaves buttons at `cursor: default`. Restore the
+   pointer here in @layer base so per-element utilities (the drag handle's
+   `cursor-grab`) still win over it. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
 body {
   background: var(--gray-0);
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 ::selection {

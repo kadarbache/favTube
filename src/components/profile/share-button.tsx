@@ -51,7 +51,7 @@ export function ShareButton({
     <button
       type="button"
       onClick={onClick}
-      className="rounded-[var(--radius)] border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:border-[var(--gray-300)]"
+      className="rounded-[var(--radius)] border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:border-[var(--gray-300)] hover:bg-subtle"
     >
       {label}
     </button>

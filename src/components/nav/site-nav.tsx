@@ -21,7 +21,7 @@ function NavItem({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-2 whitespace-nowrap px-5 py-1 text-[15px] transition-colors ${
+      className={`flex items-center gap-2 whitespace-nowrap px-5 py-1 text-[15px] transition-colors hover:text-foreground ${
         active ? "font-semibold text-foreground" : "font-medium text-muted"
       }`}
     >
@@ -111,7 +111,7 @@ export function SiteNav() {
             <>
               <Link
                 href={username ? `/u/${username}` : "/"}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 transition-opacity hover:opacity-80"
               >
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-[50%] bg-coral-100 text-[12px] font-semibold text-coral-700">
                   {initials(user.name ?? "?")}
@@ -132,7 +132,7 @@ export function SiteNav() {
           ) : (
             <Link
               href="/sign-in"
-              className="inline-flex h-[34px] items-center gap-2 rounded-[var(--radius)] bg-primary px-4 text-[13px] font-medium text-[var(--primary-foreground)]"
+              className="inline-flex h-[34px] items-center gap-2 rounded-[var(--radius)] bg-primary px-4 text-[13px] font-medium text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-hover)]"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />

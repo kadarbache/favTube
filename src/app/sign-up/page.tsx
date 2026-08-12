@@ -78,7 +78,7 @@ export default function SignUpPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-[var(--radius)] bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-60"
+            className="w-full rounded-[var(--radius)] bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-colors enabled:hover:bg-[var(--gray-700)] disabled:opacity-60"
           >
             {loading ? "Creating account…" : "Create account"}
           </button>
@@ -86,7 +86,7 @@ export default function SignUpPage() {
 
         <p className="text-center text-sm text-zinc-500">
           Already have an account?{" "}
-          <Link href="/sign-in" className="font-medium text-foreground">
+          <Link href="/sign-in" className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline">
             Sign in
           </Link>
         </p>

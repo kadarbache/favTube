@@ -84,13 +84,13 @@ export default async function Home() {
         <div className="flex flex-wrap justify-center gap-3">
           <Link
             href="/sign-up"
-            className="rounded-[var(--radius)] bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)]"
+            className="rounded-[var(--radius)] bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-hover)]"
           >
             Create your profile — it&apos;s free
           </Link>
           <Link
             href={exampleHref}
-            className="rounded-[var(--radius)] border border-border px-6 py-3 text-base font-medium"
+            className="rounded-[var(--radius)] border border-border px-6 py-3 text-base font-medium transition-colors hover:border-[var(--gray-300)] hover:bg-subtle"
           >
             See an example profile →
           </Link>
@@ -194,7 +194,7 @@ export default async function Home() {
         <div className="mt-7 flex justify-center">
           <Link
             href="/sign-up"
-            className="rounded-[var(--radius)] bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)]"
+            className="rounded-[var(--radius)] bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-hover)]"
           >
             Create your profile — it&apos;s free
           </Link>

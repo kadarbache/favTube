@@ -52,7 +52,7 @@ function SortableRow({
     >
       <button
         type="button"
-        className="cursor-grab px-1 text-muted active:cursor-grabbing"
+        className="cursor-grab px-1 text-muted transition-colors hover:text-foreground active:cursor-grabbing"
         aria-label="Drag to reorder"
         {...attributes}
         {...listeners}
@@ -98,7 +98,7 @@ function SortableRow({
         type="button"
         onClick={() => onRemove(video.id)}
         disabled={busy}
-        className="shrink-0 px-2 text-[12.5px] text-muted transition-colors hover:text-primary disabled:opacity-50"
+        className="shrink-0 px-2 text-[12.5px] text-muted transition-colors enabled:hover:text-primary disabled:opacity-50"
       >
         Remove
       </button>
@@ -179,7 +179,7 @@ export function ManageTopTen({ initialVideos }: { initialVideos: VideoCardData[]
         <button
           type="submit"
           disabled={full || pending || !url.trim()}
-          className="rounded-[var(--radius)] bg-primary px-5 py-2.5 text-sm font-medium text-[var(--primary-foreground)] disabled:opacity-50"
+          className="rounded-[var(--radius)] bg-primary px-5 py-2.5 text-sm font-medium text-[var(--primary-foreground)] transition-colors enabled:hover:bg-[var(--primary-hover)] disabled:opacity-50"
         >
           {pending ? "Adding…" : "Add"}
         </button>

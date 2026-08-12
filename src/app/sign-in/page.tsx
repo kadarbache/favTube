@@ -58,7 +58,7 @@ export default function SignInPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-[var(--radius)] bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-60"
+            className="w-full rounded-[var(--radius)] bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-colors enabled:hover:bg-[var(--gray-700)] disabled:opacity-60"
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>
@@ -66,7 +66,7 @@ export default function SignInPage() {
 
         <p className="text-center text-sm text-zinc-500">
           Don&apos;t have an account?{" "}
-          <Link href="/sign-up" className="font-medium text-foreground">
+          <Link href="/sign-up" className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline">
             Sign up
           </Link>
         </p>

@@ -89,7 +89,7 @@ export function CommentSection({
               type="button"
               onClick={onPost}
               disabled={pending || !draft.trim()}
-              className="rounded-[var(--radius)] bg-primary px-5 py-2.5 text-sm font-medium text-[var(--primary-foreground)] disabled:opacity-50"
+              className="rounded-[var(--radius)] bg-primary px-5 py-2.5 text-sm font-medium text-[var(--primary-foreground)] transition-colors enabled:hover:bg-[var(--primary-hover)] disabled:opacity-50"
             >
               Post
             </button>
@@ -130,7 +130,9 @@ export function CommentSection({
                     onClick={() => onLike(c.id)}
                     disabled={!signedIn || pending}
                     className={`text-[12.5px] transition-colors disabled:opacity-60 ${
-                      c.likedByMe ? "text-primary" : "text-muted"
+                      c.likedByMe
+                        ? "text-primary enabled:hover:opacity-70"
+                        : "text-muted enabled:hover:text-primary"
                     }`}
                   >
                     ♥ {c.likeCount}
