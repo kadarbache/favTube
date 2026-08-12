@@ -58,7 +58,7 @@
   --color-coral-50: var(--coral-50);
   --color-coral-100: var(--coral-100);
   --color-coral-700: var(--coral-700);
-  --font-sans: var(--font-roboto), "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-manrope), "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Tailwind v4's preflight leaves buttons at `cursor: default`. Restore the
