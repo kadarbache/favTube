@@ -6,6 +6,7 @@ import { VideoCard } from "@/components/profile/video-card";
 import { FollowButton } from "@/components/profile/follow-button";
 import { ShareButton } from "@/components/profile/share-button";
 import { ManageTopTen } from "@/components/profile/edit/manage-top-ten";
+import { EditProfile } from "@/components/profile/edit/edit-profile";
 import {
   CommentSection,
   type CommentData,
@@ -104,21 +105,29 @@ export default async function ProfilePage({
         <span className="inline-flex h-[84px] w-[84px] shrink-0 items-center justify-center rounded-[50%] bg-coral-100 text-[26px] font-semibold text-coral-700">
           {initials(profile.name)}
         </span>
-        <div className="flex flex-[1_1_320px] flex-col gap-2.5">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-[28px] font-semibold tracking-tight">
-              {profile.name}
-            </h1>
-            <span className="rounded-[var(--radius-full)] border border-border px-2.5 py-0.5 text-[12.5px] text-muted">
-              @{profile.username}
-            </span>
+        {isOwner ? (
+          <EditProfile
+            name={profile.name}
+            bio={profile.bio}
+            username={profile.username}
+          />
+        ) : (
+          <div className="flex flex-[1_1_320px] flex-col gap-2.5">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h1 className="text-[28px] font-semibold tracking-tight">
+                {profile.name}
+              </h1>
+              <span className="rounded-[var(--radius-full)] border border-border px-2.5 py-0.5 text-[12.5px] text-muted">
+                @{profile.username}
+              </span>
+            </div>
+            {profile.bio && (
+              <p className="max-w-[520px] text-[15px] leading-relaxed text-[var(--gray-700)]">
+                {profile.bio}
+              </p>
+            )}
           </div>
-          {profile.bio && (
-            <p className="max-w-[520px] text-[15px] leading-relaxed text-[var(--gray-700)]">
-              {profile.bio}
-            </p>
-          )}
-        </div>
+        )}
         <div className="flex items-start gap-2.5">
           {!isOwner && (
             <FollowButton
