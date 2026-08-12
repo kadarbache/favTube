@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import {
   DndContext,
   closestCenter,
@@ -42,6 +42,13 @@ function SortableRow({
     useSortable({ id: video.id });
   const duration = formatDuration(video.durationSeconds);
   const [thumbLoaded, setThumbLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // A cached image can finish loading before this effect (and thus the
+  // onLoad handler) attaches, so `complete` needs an explicit check too.
+  useEffect(() => {
+    if (imgRef.current?.complete) setThumbLoaded(true);
+  }, []);
 
   return (
     <div
@@ -78,6 +85,7 @@ function SortableRow({
         )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
+          ref={imgRef}
           src={video.thumbnailUrl}
           alt=""
           onLoad={() => setThumbLoaded(true)}
@@ -201,6 +209,7 @@ export function ManageTopTen({ initialVideos }: { initialVideos: VideoCardData[]
         </p>
       ) : (
         <DndContext
+          id="top-ten-dnd"
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={onDragEnd}
