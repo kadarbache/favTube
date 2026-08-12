@@ -42,6 +42,7 @@ function SortableRow({
     useSortable({ id: video.id });
   const duration = formatDuration(video.durationSeconds);
   const [thumbLoaded, setThumbLoaded] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   // A cached image can finish loading before this effect (and thus the
@@ -109,14 +110,35 @@ function SortableRow({
         </span>
       </div>
 
-      <button
-        type="button"
-        onClick={() => onRemove(video.id)}
-        disabled={busy}
-        className="shrink-0 px-2 text-[12.5px] text-muted transition-colors enabled:hover:text-primary disabled:opacity-50"
-      >
-        Remove
-      </button>
+      {confirming ? (
+        <div className="flex shrink-0 items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => onRemove(video.id)}
+            disabled={busy}
+            className="text-[12.5px] font-medium text-primary transition-colors enabled:hover:opacity-70 disabled:opacity-50"
+          >
+            {busy ? "Removing…" : "Confirm"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setConfirming(false)}
+            disabled={busy}
+            className="text-[12.5px] text-muted transition-colors hover:text-foreground disabled:opacity-50"
+          >
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setConfirming(true)}
+          disabled={busy}
+          className="shrink-0 px-2 text-[12.5px] text-muted transition-colors enabled:hover:text-primary disabled:opacity-50"
+        >
+          Remove
+        </button>
+      )}
     </div>
   );
 }
@@ -171,7 +193,11 @@ export function ManageTopTen({ initialVideos }: { initialVideos: VideoCardData[]
     setError(null);
     startTransition(async () => {
       const result = await removeVideoEntry(id);
-      if (!result.ok) setError(result.error);
+      if (result.ok) {
+        setVideos((prev) => prev.filter((v) => v.id !== id));
+      } else {
+        setError(result.error);
+      }
     });
   }
 
