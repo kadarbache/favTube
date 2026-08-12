@@ -59,6 +59,7 @@ export default async function ProfilePage({
       include: {
         author: { select: { id: true, name: true, username: true } },
         likes: { select: { userId: true } },
+        replyTo: { select: { author: { select: { name: true } } } },
       },
     }),
     viewerId && !isOwner
@@ -84,6 +85,7 @@ export default async function ProfilePage({
     likeCount: c.likes.length,
     likedByMe: viewerId ? c.likes.some((l) => l.userId === viewerId) : false,
     canDelete: viewerId === c.authorId || isOwner,
+    replyToAuthorName: c.replyTo?.author.name ?? null,
   }));
 
   const lastUpdated = profile.videoEntries.reduce<Date | null>(
@@ -191,6 +193,7 @@ export default async function ProfilePage({
         profileUsername={profile.username}
         comments={commentData}
         signedIn={Boolean(viewerId)}
+        isOwner={isOwner}
         viewerName={session?.user?.name ?? null}
       />
     </main>

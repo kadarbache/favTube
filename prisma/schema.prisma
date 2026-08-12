@@ -129,8 +129,15 @@ model Comment {
   createdAt     DateTime      @default(now())
   likes         CommentLike[]
 
+  // Set when the profile owner replies to feedback rather than posting their
+  // own — owners can't leave fresh feedback on their own profile.
+  replyToId String?
+  replyTo   Comment?  @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies   Comment[] @relation("CommentReplies")
+
   @@index([profileUserId, createdAt])
   @@index([authorId])
+  @@index([replyToId])
   @@map("comment")
 }
 

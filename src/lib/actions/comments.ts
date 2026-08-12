@@ -11,6 +11,7 @@ export async function postComment(
   profileUserId: string,
   profileUsername: string,
   body: string,
+  replyToId?: string,
 ): Promise<ActionResult> {
   let userId: string;
   try {
@@ -25,8 +26,25 @@ export async function postComment(
     return { ok: false, error: "That comment is too long." };
   }
 
+  // Owners can't leave fresh feedback on their own profile, only reply to
+  // comments other people left.
+  if (userId === profileUserId) {
+    const parent = replyToId
+      ? await prisma.comment.findUnique({
+          where: { id: replyToId },
+          select: { profileUserId: true },
+        })
+      : null;
+    if (!parent || parent.profileUserId !== profileUserId) {
+      return {
+        ok: false,
+        error: "You can't leave feedback on your own profile — you can reply to comments though.",
+      };
+    }
+  }
+
   await prisma.comment.create({
-    data: { authorId: userId, profileUserId, body: trimmed },
+    data: { authorId: userId, profileUserId, body: trimmed, replyToId: replyToId ?? null },
   });
 
   revalidatePath(`/u/${profileUsername}`);

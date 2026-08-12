@@ -18,6 +18,7 @@ export type CommentData = {
   likeCount: number;
   likedByMe: boolean;
   canDelete: boolean;
+  replyToAuthorName: string | null;
 };
 
 export function CommentSection({
@@ -25,15 +26,19 @@ export function CommentSection({
   profileUsername,
   comments,
   signedIn,
+  isOwner,
   viewerName,
 }: {
   profileUserId: string;
   profileUsername: string;
   comments: CommentData[];
   signedIn: boolean;
+  isOwner: boolean;
   viewerName: string | null;
 }) {
   const [draft, setDraft] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyDraft, setReplyDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -45,6 +50,32 @@ export function CommentSection({
       const result = await postComment(profileUserId, profileUsername, text);
       if (result.ok) setDraft("");
       else setError(result.error);
+    });
+  }
+
+  function onStartReply(commentId: string) {
+    setError(null);
+    setReplyDraft("");
+    setReplyingTo(commentId);
+  }
+
+  function onReply(commentId: string) {
+    const text = replyDraft.trim();
+    if (!text) return;
+    setError(null);
+    startTransition(async () => {
+      const result = await postComment(
+        profileUserId,
+        profileUsername,
+        text,
+        commentId,
+      );
+      if (result.ok) {
+        setReplyDraft("");
+        setReplyingTo(null);
+      } else {
+        setError(result.error);
+      }
     });
   }
 
@@ -70,7 +101,12 @@ export function CommentSection({
         Feedback · {comments.length}
       </h2>
 
-      {signedIn ? (
+      {signedIn && isOwner ? (
+        <p className="mb-8 text-sm text-muted">
+          You can&apos;t leave feedback on your own profile — reply to a
+          comment below instead.
+        </p>
+      ) : signedIn ? (
         <div className="mb-8 flex items-start gap-3">
           <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[50%] bg-subtle text-[12.5px] font-semibold text-[var(--gray-700)]">
             {viewerName ? initials(viewerName) : "You"}
@@ -121,6 +157,11 @@ export function CommentSection({
                     {relativeTime(new Date(c.createdAt))}
                   </span>
                 </div>
+                {c.replyToAuthorName && (
+                  <span className="text-[12px] text-muted">
+                    ↳ Replying to {c.replyToAuthorName}
+                  </span>
+                )}
                 <p className="text-[14.5px] leading-relaxed text-[var(--gray-700)]">
                   {c.body}
                 </p>
@@ -137,6 +178,16 @@ export function CommentSection({
                   >
                     ♥ {c.likeCount}
                   </button>
+                  {isOwner && (
+                    <button
+                      type="button"
+                      onClick={() => onStartReply(c.id)}
+                      disabled={pending}
+                      className="text-[12.5px] text-muted transition-colors hover:text-foreground"
+                    >
+                      Reply
+                    </button>
+                  )}
                   {c.canDelete && (
                     <button
                       type="button"
@@ -148,6 +199,36 @@ export function CommentSection({
                     </button>
                   )}
                 </div>
+                {replyingTo === c.id && (
+                  <div className="mt-1.5 flex flex-wrap gap-2">
+                    <input
+                      value={replyDraft}
+                      onChange={(e) => setReplyDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") onReply(c.id);
+                      }}
+                      autoFocus
+                      placeholder={`Reply to ${c.authorName}…`}
+                      className="min-w-[200px] flex-1 rounded-[var(--radius)] border border-border bg-background px-3 py-2 text-[13px] outline-none focus:border-[var(--gray-300)]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => onReply(c.id)}
+                      disabled={pending || !replyDraft.trim()}
+                      className="rounded-[var(--radius)] bg-primary px-3.5 py-2 text-[12.5px] font-medium text-[var(--primary-foreground)] transition-colors enabled:hover:bg-[var(--primary-hover)] disabled:opacity-50"
+                    >
+                      Reply
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setReplyingTo(null)}
+                      disabled={pending}
+                      className="text-[12.5px] text-muted transition-colors hover:text-foreground disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}
