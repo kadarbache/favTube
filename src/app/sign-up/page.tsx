@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signUp } from "@/lib/auth-client";
+import { safeNextPath } from "@/lib/utils/safe-redirect";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function SignUpPage() {
       setError(error.message ?? "Could not create your account.");
       return;
     }
-    router.push("/");
+    router.push(safeNextPath(window.location.search));
     router.refresh();
   }
 

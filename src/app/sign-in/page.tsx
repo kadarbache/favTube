@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "@/lib/auth-client";
+import { safeNextPath } from "@/lib/utils/safe-redirect";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -22,7 +23,9 @@ export default function SignInPage() {
       setError(error.message ?? "Could not sign in.");
       return;
     }
-    router.push("/");
+    // Read at submit time rather than during render: useSearchParams() would
+    // force this statically-rendered page behind a Suspense boundary.
+    router.push(safeNextPath(window.location.search));
     router.refresh();
   }
 

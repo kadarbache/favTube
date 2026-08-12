@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/actions/session";
 import { VideoCard } from "@/components/profile/video-card";
 import { FollowButton } from "@/components/profile/follow-button";
+import { ShareButton } from "@/components/profile/share-button";
 import { ManageTopTen } from "@/components/profile/edit/manage-top-ten";
 import {
   CommentSection,
@@ -118,13 +119,17 @@ export default async function ProfilePage({
             </p>
           )}
         </div>
-        {!isOwner && viewerId && (
-          <FollowButton
-            targetUserId={profile.id}
-            targetUsername={profile.username}
-            initialFollowing={Boolean(isFollowing)}
-          />
-        )}
+        <div className="flex items-start gap-2.5">
+          {!isOwner && (
+            <FollowButton
+              targetUserId={profile.id}
+              targetUsername={profile.username}
+              initialFollowing={Boolean(isFollowing)}
+              signedIn={Boolean(viewerId)}
+            />
+          )}
+          <ShareButton username={profile.username} name={profile.name} />
+        </div>
       </div>
 
       <div className="mt-9 grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-5 border-y border-border py-5">

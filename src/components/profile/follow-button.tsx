@@ -1,23 +1,34 @@
 "use client";
 
 import { useOptimistic, useTransition, useState } from "react";
+import { useRouter } from "next/navigation";
 import { followUser, unfollowUser } from "@/lib/actions/follows";
 
 export function FollowButton({
   targetUserId,
   targetUsername,
   initialFollowing,
+  signedIn,
 }: {
   targetUserId: string;
   targetUsername: string;
   initialFollowing: boolean;
+  signedIn: boolean;
 }) {
+  const router = useRouter();
   const [following, setFollowing] = useState(initialFollowing);
   const [optimistic, setOptimistic] = useOptimistic(following);
   const [, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   function onClick() {
+    // Signed-out visitors still see the button; it sends them to sign in and
+    // back to this profile rather than silently doing nothing.
+    if (!signedIn) {
+      router.push(`/sign-in?next=/u/${targetUsername}`);
+      return;
+    }
+
     setError(null);
     startTransition(async () => {
       const next = !following;
@@ -39,12 +50,12 @@ export function FollowButton({
         type="button"
         onClick={onClick}
         className={`rounded-[var(--radius)] px-5 py-2.5 text-sm font-medium transition-colors ${
-          optimistic
+          signedIn && optimistic
             ? "bg-subtle text-foreground"
             : "bg-primary text-[var(--primary-foreground)]"
         }`}
       >
-        {optimistic ? "Following" : "Follow"}
+        {signedIn && optimistic ? "Following" : "Follow"}
       </button>
       {error && <span className="text-[12px] text-primary">{error}</span>}
     </div>
