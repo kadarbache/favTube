@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { formatCount, initials } from "@/lib/utils/format";
+import { formatCount } from "@/lib/utils/format";
 import { AnimatedGridBackdrop } from "@/components/landing/animated-grid-backdrop";
+import { Avatar } from "@/components/ui/avatar";
 
 // Counts and the featured profile come from the database, so don't freeze this
 // page at build time.
@@ -109,9 +110,7 @@ export default async function Home() {
           </div>
           <div className="px-7 pb-8 pt-7">
             <div className="mb-6 flex items-center gap-3.5">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-[50%] bg-coral-100 text-[15px] font-semibold text-coral-700">
-                {initials(featured?.name ?? "favTube")}
-              </span>
+              <Avatar className="h-11 w-11" />
               <div className="flex flex-col gap-0.5">
                 <span className="text-[15px] font-semibold">
                   {featured?.name ?? "Your name"}

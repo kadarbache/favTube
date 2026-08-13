@@ -11,7 +11,8 @@ import {
   CommentSection,
   type CommentData,
 } from "@/components/comments/comment-section";
-import { initials, relativeTime, formatCount } from "@/lib/utils/format";
+import { relativeTime, formatCount } from "@/lib/utils/format";
+import { Avatar } from "@/components/ui/avatar";
 
 export async function generateMetadata({
   params,
@@ -104,9 +105,7 @@ export default async function ProfilePage({
   return (
     <main className="mx-auto w-full max-w-[1000px] flex-1 px-7 pt-14">
       <div className="flex flex-wrap items-start gap-6">
-        <span className="inline-flex h-[84px] w-[84px] shrink-0 items-center justify-center rounded-[50%] bg-coral-100 text-[26px] font-semibold text-coral-700">
-          {initials(profile.name)}
-        </span>
+        <Avatar className="h-[84px] w-[84px]" />
         {isOwner ? (
           <EditProfile
             name={profile.name}
@@ -194,7 +193,6 @@ export default async function ProfilePage({
         comments={commentData}
         signedIn={Boolean(viewerId)}
         isOwner={isOwner}
-        viewerName={session?.user?.name ?? null}
       />
     </main>
   );

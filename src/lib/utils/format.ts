@@ -24,11 +24,6 @@ export function relativeTime(date: Date): string {
   return `${Math.floor(months / 12)}y ago`;
 }
 
-export function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).slice(0, 2);
-  return parts.map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
-}
-
 export function formatCount(n: number): string {
   if (n < 1000) return String(n);
   if (n < 1_000_000) {

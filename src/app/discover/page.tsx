@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { formatCount, initials } from "@/lib/utils/format";
+import { formatCount } from "@/lib/utils/format";
+import { Avatar } from "@/components/ui/avatar";
 
 export const revalidate = 60;
 
@@ -57,9 +58,7 @@ export default async function DiscoverPage() {
               className="flex flex-col gap-3.5 rounded-[var(--radius-2xl)] border border-border p-4 transition-colors hover:border-[var(--gray-300)]"
             >
               <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[50%] bg-coral-100 text-[13px] font-semibold text-coral-700">
-                  {initials(p.name)}
-                </span>
+                <Avatar className="h-10 w-10" />
                 <div className="flex min-w-0 flex-col">
                   <span className="truncate text-sm font-semibold">
                     {p.name}

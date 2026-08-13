@@ -6,7 +6,8 @@ import {
   deleteComment,
   toggleCommentLike,
 } from "@/lib/actions/comments";
-import { initials, relativeTime } from "@/lib/utils/format";
+import { relativeTime } from "@/lib/utils/format";
+import { Avatar } from "@/components/ui/avatar";
 
 export type CommentData = {
   id: string;
@@ -27,14 +28,12 @@ export function CommentSection({
   comments,
   signedIn,
   isOwner,
-  viewerName,
 }: {
   profileUserId: string;
   profileUsername: string;
   comments: CommentData[];
   signedIn: boolean;
   isOwner: boolean;
-  viewerName: string | null;
 }) {
   const [draft, setDraft] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -108,9 +107,7 @@ export function CommentSection({
         </p>
       ) : signedIn ? (
         <div className="mb-8 flex items-start gap-3">
-          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[50%] bg-subtle text-[12.5px] font-semibold text-[var(--gray-700)]">
-            {viewerName ? initials(viewerName) : "You"}
-          </span>
+          <Avatar className="h-9 w-9" />
           <div className="flex flex-1 flex-wrap gap-2.5">
             <input
               value={draft}
@@ -147,9 +144,7 @@ export function CommentSection({
         <div className="flex flex-col gap-6">
           {comments.map((c) => (
             <div key={c.id} className="flex items-start gap-3">
-              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[50%] bg-subtle text-[12.5px] font-semibold text-[var(--gray-700)]">
-                {initials(c.authorName)}
-              </span>
+              <Avatar className="h-9 w-9" />
               <div className="flex flex-1 flex-col gap-1.5">
                 <div className="flex items-baseline gap-2.5">
                   <span className="text-sm font-semibold">{c.authorName}</span>
