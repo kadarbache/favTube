@@ -28,11 +28,13 @@ function NavItem({
   );
 }
 
-export function SiteNav() {
+type SessionUser = { username?: string | null };
+
+export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, resolvedTheme, setTheme } = useTheme();
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const [atTop, setAtTop] = useState(true);
 
   useEffect(() => {
@@ -41,8 +43,12 @@ export function SiteNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const user = session?.user;
-  const username = (user as { username?: string | null } | undefined)?.username;
+  // The client session hook starts pending on every mount (including after a
+  // refresh) and briefly reports no user, which flashed the signed-out nav
+  // before flipping to signed-in. Trust the server-rendered session until the
+  // client fetch actually resolves.
+  const user = isPending ? initialUser : session?.user;
+  const username = (user as SessionUser | undefined)?.username;
 
   return (
     <div
