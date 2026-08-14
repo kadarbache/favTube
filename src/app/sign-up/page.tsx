@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signUp } from "@/lib/auth-client";
+import { GoogleButton } from "@/components/auth/google-button";
 import { safeNextPath } from "@/lib/utils/safe-redirect";
 
 export default function SignUpPage() {
@@ -83,6 +84,8 @@ export default function SignUpPage() {
             {loading ? "Creating account…" : "Create account"}
           </button>
         </form>
+
+        <GoogleButton label="Sign up with Google" />
 
         <p className="text-center text-sm text-zinc-500">
           Already have an account?{" "}

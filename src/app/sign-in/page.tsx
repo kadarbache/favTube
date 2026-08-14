@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "@/lib/auth-client";
+import { GoogleButton } from "@/components/auth/google-button";
 import { safeNextPath } from "@/lib/utils/safe-redirect";
 
 export default function SignInPage() {
@@ -63,6 +64,8 @@ export default function SignInPage() {
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
+
+        <GoogleButton label="Continue with Google" />
 
         <p className="text-center text-sm text-zinc-500">
           Don&apos;t have an account?{" "}
