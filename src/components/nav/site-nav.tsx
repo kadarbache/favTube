@@ -82,12 +82,17 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
         </div>
 
         {/* One element in both layouts: a dropdown panel under the bar on
-            mobile, the inline centre column from `md` up. */}
+            mobile, the inline centre column from `md` up.
+
+            The column is pinned rather than auto-placed: a `display:none` cell
+            is not a grid item at all, so when the brand hides for signed-in
+            users the nav would otherwise slide into the left track and centre
+            itself inside that third of the bar. */}
         <nav
           onClick={() => setMenuOpen(false)}
           className={`${
             menuOpen ? "flex" : "hidden"
-          } absolute inset-x-0 top-full flex-col items-stretch border-b border-zinc-200 bg-background py-2 dark:border-zinc-800 md:static md:flex md:flex-row md:items-center md:justify-self-center md:border-0 md:bg-transparent md:py-0`}
+          } absolute inset-x-0 top-full flex-col items-stretch border-b border-zinc-200 bg-background py-2 dark:border-zinc-800 md:static md:col-start-2 md:flex md:flex-row md:items-center md:justify-self-center md:border-0 md:bg-transparent md:py-0`}
         >
           {!user && (
             <NavItem
@@ -165,7 +170,7 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
           )}
         </nav>
 
-        <div className="flex items-center gap-3 justify-self-end">
+        <div className="flex items-center gap-3 justify-self-end md:col-start-3">
           {!user && (
             <Link
               href="/sign-in"
