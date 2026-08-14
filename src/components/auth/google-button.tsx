@@ -28,8 +28,13 @@ function GoogleMark() {
 }
 
 /**
- * `signIn.social` hands the browser off to Google, so a successful call never
- * returns — only the error path gets to clear `loading`.
+ * `signIn.social` normally hands the browser off to Google, so on success this
+ * component is unmounted mid-flight and never clears `loading`.
+ *
+ * Every way that can fail has to clear it explicitly, or the button sits on
+ * "Redirecting…" forever with nothing to go on: a rejected promise (the
+ * request never reached the auth route), a returned error, or a response that
+ * carries a URL the client didn't navigate to.
  */
 export function GoogleButton({ label }: { label: string }) {
   const [error, setError] = useState<string | null>(null);
@@ -38,12 +43,26 @@ export function GoogleButton({ label }: { label: string }) {
   async function onClick() {
     setError(null);
     setLoading(true);
-    const { error } = await signIn.social({
-      provider: "google",
-      callbackURL: safeNextPath(window.location.search),
-    });
-    if (error) {
-      setError(error.message ?? "Could not continue with Google.");
+    try {
+      const { data, error } = await signIn.social({
+        provider: "google",
+        callbackURL: safeNextPath(window.location.search),
+      });
+      if (error) {
+        setError(error.message ?? "Could not continue with Google.");
+        setLoading(false);
+        return;
+      }
+      const url = (data as { url?: string } | null)?.url;
+      if (url) {
+        // Reached only if the client didn't navigate on its own.
+        window.location.href = url;
+        return;
+      }
+      setError("Google sign-in returned no redirect URL.");
+      setLoading(false);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not reach the sign-in service.");
       setLoading(false);
     }
   }
