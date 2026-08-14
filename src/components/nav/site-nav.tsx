@@ -20,7 +20,7 @@ function NavItem({
   return (
     <Link
       href={href}
-      className="flex items-center gap-2 whitespace-nowrap px-5 py-2.5 text-[15px] font-black text-foreground md:py-1"
+      className="flex items-center gap-3 whitespace-nowrap rounded-[10px] px-3 py-2.5 text-[15px] font-black text-foreground transition-colors hover:bg-[var(--gray-200)] md:gap-2 md:rounded-none md:px-5 md:py-1 md:hover:bg-transparent"
     >
       <span className={active ? "text-primary" : ""}>{icon}</span>
       {children}
@@ -61,12 +61,23 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
   return (
     <div
       className={`sticky top-0 z-20 [transition:background-color_0.2s_ease] ${
-        // An open panel is opaque, so a transparent bar above it would look detached.
+        // The bar sits above the dimmed backdrop, so it goes opaque with the
+        // menu open rather than showing blurred page content through itself.
         atTop && !menuOpen
           ? "bg-transparent"
           : "bg-[var(--nav-bg)] backdrop-blur backdrop-saturate-[1.2]"
       }`}
     >
+      {/* First child, so the bar row paints over it and stays legible while
+          the page behind dims. Tapping anywhere off the panel closes it. */}
+      {menuOpen && (
+        <div
+          onClick={() => setMenuOpen(false)}
+          aria-hidden
+          className="fixed inset-0 bg-black/25 backdrop-blur-[2px] md:hidden"
+        />
+      )}
+
       <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-5 px-5 py-4 md:grid md:grid-cols-[1fr_auto_1fr] md:px-7">
         {/* The brand is desktop-only when signed in, but on mobile it's the
             only thing anchoring the left of the bar, so it always shows. */}
@@ -92,7 +103,7 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
           onClick={() => setMenuOpen(false)}
           className={`${
             menuOpen ? "flex" : "hidden"
-          } absolute inset-x-0 top-full flex-col items-stretch border-b border-zinc-200 bg-background py-2 dark:border-zinc-800 md:static md:col-start-2 md:flex md:flex-row md:items-center md:justify-self-center md:border-0 md:bg-transparent md:py-0`}
+          } absolute right-5 top-[calc(100%-4px)] w-[min(15rem,calc(100vw-2.5rem))] flex-col items-stretch rounded-[var(--radius-2xl)] border border-border bg-[var(--gray-100)] p-1.5 shadow-[var(--shadow-card)] md:static md:col-start-2 md:flex md:w-auto md:flex-row md:items-center md:justify-self-center md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none`}
         >
           {!user && (
             <NavItem
@@ -141,7 +152,7 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
             onClick={() =>
               setTheme((resolvedTheme ?? theme) === "dark" ? "light" : "dark")
             }
-            className="flex items-center gap-2 whitespace-nowrap px-5 py-2.5 text-[15px] font-black text-foreground md:py-1"
+            className="flex items-center gap-3 whitespace-nowrap rounded-[10px] px-3 py-2.5 text-[15px] font-black text-foreground transition-colors hover:bg-[var(--gray-200)] md:gap-2 md:rounded-none md:px-5 md:py-1 md:hover:bg-transparent"
           >
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
@@ -158,7 +169,7 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
                 router.push("/");
                 router.refresh();
               }}
-              className="flex items-center gap-2 whitespace-nowrap px-5 py-2.5 text-[15px] font-black text-foreground md:py-1"
+              className="flex items-center gap-3 whitespace-nowrap rounded-[10px] px-3 py-2.5 text-[15px] font-black text-foreground transition-colors hover:bg-[var(--gray-200)] md:gap-2 md:rounded-none md:px-5 md:py-1 md:hover:bg-transparent"
             >
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -189,22 +200,20 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
             onClick={() => setMenuOpen((open) => !open)}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
-            className="-mr-2 p-2 text-foreground md:hidden"
+            className="-mr-2 rounded-[10px] p-2 text-foreground transition-colors hover:bg-[var(--gray-100)] md:hidden"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              {menuOpen ? (
-                <>
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </>
-              ) : (
-                <>
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </>
-              )}
-            </svg>
+            {menuOpen ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="5" r="1.75" />
+                <circle cx="12" cy="12" r="1.75" />
+                <circle cx="12" cy="19" r="1.75" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
