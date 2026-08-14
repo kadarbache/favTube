@@ -36,9 +36,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <BackgroundPattern />
           <SiteNav initialUser={session?.user ?? null} />
           {children}
-          <footer className="mx-auto mt-24 flex w-full max-w-[1000px] flex-wrap items-center justify-between gap-5 border-t border-border px-7 pb-10 pt-6">
+          {/* Column-reverse on mobile puts the links above the copyright while
+              leaving the copyright first in the DOM, then the row layout from
+              `md` up restores copyright-left, links-right. */}
+          <footer className="mx-auto mt-24 flex w-full max-w-[1000px] flex-col-reverse items-center gap-4 border-t border-border px-7 pb-10 pt-6 md:flex-row md:justify-between md:gap-5">
             <span className="text-[13px] text-muted">© 2026 favTube</span>
-            <div className="flex gap-6 text-[13px] text-muted">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[13px] text-muted">
               <span>Terms of use</span>
               <span>Privacy policy</span>
               <span>Contact us</span>
