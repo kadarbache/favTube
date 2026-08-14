@@ -106,7 +106,7 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
             onClick={() => setMenuOpen(false)}
             className={`${
               menuOpen ? "flex" : "hidden"
-            } absolute right-5 top-[calc(100%-4px)] w-[min(15rem,calc(100vw-2.5rem))] flex-col items-stretch rounded-[var(--radius-2xl)] border border-border bg-[var(--gray-100)] p-1.5 shadow-[var(--shadow-card)] md:static md:col-start-2 md:flex md:w-auto md:flex-row md:items-center md:justify-self-center md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none`}
+            } absolute right-5 top-full mt-[5px] w-[min(15rem,calc(100vw-2.5rem))] flex-col items-stretch rounded-[var(--radius-2xl)] border border-border bg-[var(--gray-100)] p-1.5 shadow-[var(--shadow-card)] md:static md:col-start-2 md:mt-0 md:flex md:w-auto md:flex-row md:items-center md:justify-self-center md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none`}
           >
             {!user && (
               <NavItem
