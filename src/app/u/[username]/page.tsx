@@ -114,14 +114,9 @@ export default async function ProfilePage({
           />
         ) : (
           <div className="flex flex-[1_1_320px] flex-col gap-2.5">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-[28px] font-semibold tracking-tight">
-                {profile.name}
-              </h1>
-              <span className="rounded-[var(--radius-full)] border border-border px-2.5 py-0.5 text-[12.5px] text-muted">
-                @{profile.username}
-              </span>
-            </div>
+            <h1 className="text-[28px] font-semibold tracking-tight">
+              {profile.name}
+            </h1>
             {profile.bio && (
               <p className="max-w-[520px] text-[15px] leading-relaxed text-[var(--gray-700)]">
                 {profile.bio}
