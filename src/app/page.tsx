@@ -89,16 +89,19 @@ export default async function Home() {
           Build a ranked top ten, publish it as a profile, and hear what people
           actually think of your taste.
         </p>
-        <div className="flex flex-wrap justify-center gap-3">
+        {/* Sized to their labels, the two sit at different widths whenever they
+            share a row. Below md they stack and fill instead, which makes them
+            match without squeezing either label onto two lines. */}
+        <div className="flex flex-col justify-center gap-3 md:flex-row md:flex-wrap">
           <Link
             href="/sign-up"
-            className="rounded-[var(--radius)] bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-hover)]"
+            className="w-full rounded-[var(--radius)] bg-primary px-6 py-3 text-base font-medium text-[var(--primary-foreground)] transition-colors hover:bg-[var(--primary-hover)] md:w-auto"
           >
             Create your profile — it&apos;s free
           </Link>
           <Link
             href={exampleHref}
-            className="rounded-[var(--radius)] border border-border px-6 py-3 text-base font-medium transition-colors hover:border-[var(--gray-300)] hover:bg-subtle"
+            className="w-full rounded-[var(--radius)] border border-border px-6 py-3 text-base font-medium transition-colors hover:border-[var(--gray-300)] hover:bg-subtle md:w-auto"
           >
             See an example profile →
           </Link>
