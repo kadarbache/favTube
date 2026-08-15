@@ -39,6 +39,13 @@ export function parseYoutubeUrl(input: string): string | null {
   return candidate && VIDEO_ID_PATTERN.test(candidate) ? candidate : null;
 }
 
+// `playsinline` is what keeps the player in our overlay on iOS — without it
+// Safari ejects into its own fullscreen player, which offers its own way out to
+// the YouTube app. `rel=0` keeps end-screen suggestions on the same channel.
+export function youtubeEmbedUrl(videoId: string): string {
+  return `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;
+}
+
 // ISO 8601 durations from the Data API look like PT4M13S / PT1H2M3S / P1DT2H.
 export function parseIsoDuration(iso: string | undefined | null): number {
   if (!iso) return 0;

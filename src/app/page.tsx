@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatCount } from "@/lib/utils/format";
+import { youtubeEmbedUrl } from "@/lib/youtube";
 import { AnimatedGridBackdrop } from "@/components/landing/animated-grid-backdrop";
 import { Avatar } from "@/components/ui/avatar";
+import { HeroVideoDialog } from "@/registry/magicui/hero-video-dialog";
 
 // Counts and the featured profile come from the database, so don't freeze this
 // page at build time.
@@ -43,7 +45,12 @@ async function getShowcase() {
             videoEntries: {
               orderBy: { rank: "asc" },
               take: 5,
-              select: { id: true, thumbnailUrl: true },
+              select: {
+                id: true,
+                thumbnailUrl: true,
+                youtubeVideoId: true,
+                title: true,
+              },
             },
           },
         }),
@@ -122,27 +129,22 @@ export default async function Home() {
               </div>
             </div>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3">
-              {(featured?.videoEntries.length
-                ? featured.videoEntries
-                : Array.from({ length: 5 }, (_, i) => ({
-                    id: `placeholder-${i}`,
-                    thumbnailUrl: "",
-                  }))
-              ).map((v) => (
-                <div
-                  key={v.id}
-                  className="relative flex aspect-video items-center justify-center overflow-hidden rounded-[var(--radius)] bg-subtle"
-                >
-                  {v.thumbnailUrl && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={v.thumbnailUrl}
-                      alt=""
-                      className="h-full w-full object-cover"
+              {featured?.videoEntries.length
+                ? featured.videoEntries.map((v) => (
+                    <HeroVideoDialog
+                      key={v.id}
+                      animationStyle="from-center"
+                      videoSrc={youtubeEmbedUrl(v.youtubeVideoId)}
+                      thumbnailSrc={v.thumbnailUrl}
+                      thumbnailAlt={v.title}
                     />
-                  )}
-                </div>
-              ))}
+                  ))
+                : Array.from({ length: 5 }, (_, i) => (
+                    <div
+                      key={`placeholder-${i}`}
+                      className="aspect-video overflow-hidden rounded-[var(--radius)] bg-subtle"
+                    />
+                  ))}
             </div>
           </div>
         </div>
