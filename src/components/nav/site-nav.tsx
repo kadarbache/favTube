@@ -7,8 +7,11 @@ import { useTheme } from "next-themes";
 import { useSession, signOut } from "@/lib/auth-client";
 
 // Panel row on mobile (own radius and hover fill), plain inline item from `md`.
+// The `md:border-l` is one half of the divider rule: every item draws the line
+// on its own leading edge and the nav closes the run with a trailing one, so
+// each boundary gets exactly one rule and the outer two land at the ends.
 const ROW_CLASS =
-  "flex items-center gap-3 whitespace-nowrap rounded-[10px] px-3 py-2.5 text-[15px] font-black text-foreground transition-colors hover:bg-[var(--gray-200)] md:gap-2 md:rounded-none md:px-5 md:py-1 md:hover:bg-transparent";
+  "flex items-center gap-3 whitespace-nowrap rounded-[10px] px-3 py-2.5 text-[15px] font-black text-foreground transition-colors hover:bg-[var(--gray-200)] md:gap-2 md:rounded-none md:border-l md:border-border md:px-5 md:py-1.5 md:hover:bg-transparent";
 
 function NavItem({
   href,
@@ -106,7 +109,7 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
             onClick={() => setMenuOpen(false)}
             className={`${
               menuOpen ? "flex" : "hidden"
-            } absolute right-5 top-full mt-[5px] w-[min(15rem,calc(100vw-2.5rem))] flex-col items-stretch rounded-[var(--radius-2xl)] border border-border bg-[var(--gray-100)] p-1.5 shadow-[var(--shadow-card)] md:static md:col-start-2 md:mt-0 md:flex md:w-auto md:flex-row md:items-center md:justify-self-center md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none`}
+            } absolute right-5 top-full mt-[5px] w-[min(15rem,calc(100vw-2.5rem))] flex-col items-stretch rounded-[var(--radius-2xl)] border border-border bg-[var(--gray-100)] p-1.5 shadow-[var(--shadow-card)] md:static md:col-start-2 md:mt-0 md:flex md:w-auto md:flex-row md:justify-self-center md:rounded-none md:border-y-0 md:border-l-0 md:bg-transparent md:p-0 md:shadow-none`}
           >
             {!user && (
               <NavItem
