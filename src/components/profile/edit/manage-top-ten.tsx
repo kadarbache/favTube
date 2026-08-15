@@ -38,8 +38,15 @@ function SortableRow({
   onRemove: (id: string) => void;
   busy: boolean;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: video.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: video.id });
   const duration = formatDuration(video.durationSeconds);
   const [thumbLoaded, setThumbLoaded] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -59,9 +66,14 @@ function SortableRow({
         isDragging ? "z-10 shadow-[var(--shadow-card)]" : ""
       }`}
     >
+      {/* `touch-none` is what makes this work on a phone: without it the browser
+          claims the vertical gesture as a page scroll and cancels the pointer
+          before the sensor's activation distance is met. Scoping it to the
+          handle keeps the rest of the row scrollable. */}
       <button
+        ref={setActivatorNodeRef}
         type="button"
-        className="cursor-grab px-1 text-muted transition-colors hover:text-foreground active:cursor-grabbing"
+        className="flex h-11 w-8 shrink-0 cursor-grab touch-none select-none items-center justify-center text-muted transition-colors hover:text-foreground active:cursor-grabbing"
         aria-label="Drag to reorder"
         {...attributes}
         {...listeners}
