@@ -11,7 +11,11 @@ import { useSession, signOut } from "@/lib/auth-client";
 // on its own leading edge and the nav closes the run with a trailing one, so
 // each boundary gets exactly one rule and the outer two land at the ends.
 const ROW_CLASS =
-  "flex items-center gap-3 whitespace-nowrap rounded-[10px] px-3 py-2.5 text-[15px] font-black text-foreground transition-colors hover:bg-[var(--gray-200)] md:gap-2 md:rounded-none md:border-l md:border-border md:px-5 md:py-1.5 md:hover:bg-transparent";
+  "flex items-center gap-3 whitespace-nowrap rounded-[10px] px-3 py-2.5 text-[15px] font-black text-foreground transition-[color,background-color,opacity] hover:bg-[var(--gray-200)] md:gap-2 md:rounded-none md:border-l md:border-border md:px-5 md:py-1.5 md:hover:bg-transparent";
+
+// Only the current page reads at full strength. The toggles never light up —
+// they aren't destinations — so they carry this permanently.
+const DIMMED_CLASS = "opacity-60 hover:opacity-100";
 
 function NavItem({
   href,
@@ -25,7 +29,11 @@ function NavItem({
   children: React.ReactNode;
 }) {
   return (
-    <Link href={href} className={ROW_CLASS}>
+    <Link
+      href={href}
+      className={`${ROW_CLASS} ${active ? "" : DIMMED_CLASS}`}
+      aria-current={active ? "page" : undefined}
+    >
       <span className={active ? "text-primary" : ""}>{icon}</span>
       {children}
     </Link>
@@ -158,7 +166,7 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
               onClick={() =>
                 setTheme((resolvedTheme ?? theme) === "dark" ? "light" : "dark")
               }
-              className={ROW_CLASS}
+              className={`${ROW_CLASS} ${DIMMED_CLASS}`}
             >
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
@@ -175,7 +183,7 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
                   router.push("/");
                   router.refresh();
                 }}
-                className={ROW_CLASS}
+                className={`${ROW_CLASS} ${DIMMED_CLASS}`}
               >
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
