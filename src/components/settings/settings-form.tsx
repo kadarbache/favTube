@@ -6,16 +6,19 @@ import Link from "next/link";
 import { setProfilePrivacy, updateUsername } from "@/lib/actions/profile";
 import { signOut } from "@/lib/auth-client";
 import { Avatar } from "@/components/ui/avatar";
+import { ChangePassword } from "@/components/settings/change-password";
 import { USERNAME_MAX_LENGTH } from "@/lib/constants";
 
 export function SettingsForm({
   name,
   username,
   isPrivate,
+  hasPassword,
 }: {
   name: string;
   username: string;
   isPrivate: boolean;
+  hasPassword: boolean;
 }) {
   const router = useRouter();
 
@@ -137,6 +140,8 @@ export function SettingsForm({
           </p>
         )}
       </form>
+
+      <ChangePassword hasPassword={hasPassword} />
 
       <div className="flex flex-col gap-2">
         <label

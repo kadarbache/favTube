@@ -14,15 +14,28 @@ export default async function SettingsPage() {
   const session = await getSession();
   if (!session?.user?.id) redirect("/sign-in?next=/settings");
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      name: true,
-      username: true,
-      displayUsername: true,
-      isPrivate: true,
-    },
-  });
+  const [user, credentialAccount] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        name: true,
+        username: true,
+        displayUsername: true,
+        isPrivate: true,
+      },
+    }),
+    // Whether there's a password to change is a property of the account, not
+    // the user: someone who signed up by email and later linked Google still
+    // has one. This is the same row better-auth's /change-password looks for.
+    prisma.account.findFirst({
+      where: {
+        userId: session.user.id,
+        providerId: "credential",
+        password: { not: null },
+      },
+      select: { id: true },
+    }),
+  ]);
   // The session outlived the row (deleted account, wiped database): treat it as
   // signed out rather than rendering a form with nothing behind it.
   if (!user) redirect("/sign-in?next=/settings");
@@ -38,6 +51,7 @@ export default async function SettingsPage() {
         name={user.name}
         username={user.displayUsername ?? user.username ?? ""}
         isPrivate={user.isPrivate}
+        hasPassword={Boolean(credentialAccount)}
       />
     </main>
   );

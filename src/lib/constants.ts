@@ -9,6 +9,10 @@ export const USERNAME_MIN_LENGTH = 3;
 export const USERNAME_MAX_LENGTH = 30;
 export const USERNAME_PATTERN = /^[a-z0-9_.]+$/;
 
+// better-auth's own floor, which it enforces server-side on every password
+// change. Repeated here only so the form can say so before submitting.
+export const PASSWORD_MIN_LENGTH = 8;
+
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
 // Lives here rather than beside the action: a "use server" module may only
