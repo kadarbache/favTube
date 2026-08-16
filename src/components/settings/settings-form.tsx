@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { setProfilePrivacy, updateUsername } from "@/lib/actions/profile";
-import { signOut } from "@/lib/auth-client";
+import { authClient, signOut } from "@/lib/auth-client";
 import { Avatar } from "@/components/ui/avatar";
 import { ChangePassword } from "@/components/settings/change-password";
 import { DeleteAccount } from "@/components/settings/delete-account";
@@ -51,8 +51,11 @@ export function SettingsForm({
         toast.success("Username updated", {
           description: `Your profile now lives at favtube.com/u/${result.username}.`,
         });
-        // The nav's Profile link and every /u/… path key off the handle, so the
-        // session the nav is holding is stale until this refetches.
+        // The nav builds its Profile link from the client's cached session,
+        // which better-auth only refetches after its own endpoints. This write
+        // goes through Prisma, so nudge the signal by hand — otherwise the link
+        // keeps pointing at the old handle, which now 404s.
+        authClient.$store.notify("$sessionSignal");
         router.refresh();
       } else {
         toast.error(result.error);

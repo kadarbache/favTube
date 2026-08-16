@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
@@ -18,9 +18,9 @@ import { Avatar } from "@/components/ui/avatar";
 export async function generateMetadata({
   params,
 }: PageProps<"/u/[username]">): Promise<Metadata> {
-  const { username } = await params;
+  const { username: requested } = await params;
   const user = await prisma.user.findUnique({
-    where: { username },
+    where: { username: requested.toLowerCase() },
     select: { name: true, bio: true, isPrivate: true },
   });
   if (!user) return { title: "Profile not found — favTube" };
@@ -70,7 +70,11 @@ function PrivateProfile({ username }: { username: string }) {
 export default async function ProfilePage({
   params,
 }: PageProps<"/u/[username]">) {
-  const { username } = await params;
+  // Handles are stored lowercase, so a link differing only in case points at
+  // the same profile: look it up normalized, then send the browser to the
+  // canonical URL instead of letting the casing 404.
+  const { username: requested } = await params;
+  const username = requested.toLowerCase();
 
   const profile = await prisma.user.findUnique({
     where: { username },
@@ -86,7 +90,10 @@ export default async function ProfilePage({
     },
   });
 
+  // A handle that doesn't exist still 404s — the redirect below is only for
+  // reaching a real profile by a non-canonical spelling.
   if (!profile || !profile.username) notFound();
+  if (requested !== username) redirect(`/u/${username}`);
 
   const session = await getSession();
   const viewerId = session?.user?.id ?? null;
