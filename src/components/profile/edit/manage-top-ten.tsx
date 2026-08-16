@@ -23,6 +23,7 @@ import {
   removeVideoEntry,
   reorderVideoEntries,
 } from "@/lib/actions/video-entries";
+import { toast } from "sonner";
 import { MAX_ENTRIES } from "@/lib/constants";
 import { formatDuration } from "@/lib/utils/format";
 import type { VideoCardData } from "@/components/profile/video-card";
@@ -158,7 +159,6 @@ function SortableRow({
 export function ManageTopTen({ initialVideos }: { initialVideos: VideoCardData[] }) {
   const [videos, setVideos] = useState(initialVideos);
   const [url, setUrl] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   const sensors = useSensors(
@@ -179,36 +179,37 @@ export function ManageTopTen({ initialVideos }: { initialVideos: VideoCardData[]
 
     startTransition(async () => {
       const result = await reorderVideoEntries(next.map((v) => v.id));
+      // No toast when it works — the list already moved under the cursor.
       if (!result.ok) {
         setVideos(videos);
-        setError(result.error);
+        toast.error(result.error);
       }
     });
   }
 
   function onAdd(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     const value = url;
     startTransition(async () => {
       const result = await addVideoEntry(value);
       if (result.ok) {
         setUrl("");
         setVideos((prev) => [...prev, result.video]);
+        toast.success("Video added to your top ten");
       } else {
-        setError(result.error);
+        toast.error(result.error);
       }
     });
   }
 
   function onRemove(id: string) {
-    setError(null);
     startTransition(async () => {
       const result = await removeVideoEntry(id);
       if (result.ok) {
         setVideos((prev) => prev.filter((v) => v.id !== id));
+        toast.success("Video removed");
       } else {
-        setError(result.error);
+        toast.error(result.error);
       }
     });
   }
@@ -238,8 +239,6 @@ export function ManageTopTen({ initialVideos }: { initialVideos: VideoCardData[]
           {pending ? "Adding…" : "Add"}
         </button>
       </form>
-
-      {error && <p className="text-sm text-primary">{error}</p>}
 
       {videos.length === 0 ? (
         <p className="rounded-[var(--radius)] border border-dashed border-border px-4 py-8 text-center text-sm text-muted">

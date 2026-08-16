@@ -6,6 +6,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { SiteNav } from "@/components/nav/site-nav";
 import { BackgroundPattern } from "@/components/layout/background-pattern";
+import { Toaster } from "@/components/ui/toaster";
 import { getSession } from "@/lib/actions/session";
 
 const manrope = Manrope({
@@ -34,6 +35,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="relative min-h-full flex flex-col font-sans">
         <ThemeProvider>
           <BackgroundPattern />
+          <Toaster />
           <SiteNav initialUser={session?.user ?? null} />
           {children}
           {/* Column-reverse on mobile puts the links above the copyright while

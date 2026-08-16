@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
 function messageFor(error: {
@@ -36,7 +37,6 @@ export function DeleteAccount({
   const [confirming, setConfirming] = useState(false);
   const [typed, setTyped] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   // Typing the handle is the guard against a stray click; the password (when
@@ -48,11 +48,9 @@ export function DeleteAccount({
     setConfirming(false);
     setTyped("");
     setPassword("");
-    setError(null);
   }
 
   async function onDelete() {
-    setError(null);
     setDeleting(true);
     const { error } = await authClient.deleteUser(
       hasPassword ? { password } : {},
@@ -60,7 +58,7 @@ export function DeleteAccount({
 
     if (error) {
       setDeleting(false);
-      setError(messageFor(error));
+      toast.error(messageFor(error));
       return;
     }
 
@@ -99,10 +97,7 @@ export function DeleteAccount({
             <input
               id="delete-confirm"
               value={typed}
-              onChange={(e) => {
-                setTyped(e.target.value);
-                setError(null);
-              }}
+              onChange={(e) => setTyped(e.target.value)}
               autoComplete="off"
               spellCheck={false}
               className="w-full rounded-[var(--radius)] border border-coral-100 bg-background px-3.5 py-2.5 text-[15px] outline-none transition-colors focus:border-primary"
@@ -121,10 +116,7 @@ export function DeleteAccount({
                 id="delete-password"
                 type="password"
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError(null);
-                }}
+                onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 className="w-full rounded-[var(--radius)] border border-coral-100 bg-background px-3.5 py-2.5 text-[15px] outline-none transition-colors focus:border-primary"
               />
@@ -148,9 +140,6 @@ export function DeleteAccount({
             >
               Cancel
             </button>
-            {error && (
-              <span className="text-[12.5px] text-coral-700">{error}</span>
-            )}
           </div>
         </div>
       )}

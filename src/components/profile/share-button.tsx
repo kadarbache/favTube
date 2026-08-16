@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 export function ShareButton({
   username,
@@ -9,23 +9,6 @@ export function ShareButton({
   username: string;
   name: string;
 }) {
-  const [label, setLabel] = useState<"Share" | "Copied" | "Copy failed">(
-    "Share",
-  );
-  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (resetTimer.current) clearTimeout(resetTimer.current);
-    };
-  }, []);
-
-  function flash(next: "Copied" | "Copy failed") {
-    setLabel(next);
-    if (resetTimer.current) clearTimeout(resetTimer.current);
-    resetTimer.current = setTimeout(() => setLabel("Share"), 2000);
-  }
-
   async function onClick() {
     const url = `${window.location.origin}/u/${username}`;
 
@@ -41,9 +24,9 @@ export function ShareButton({
 
     try {
       await navigator.clipboard.writeText(url);
-      flash("Copied");
+      toast.success("Link copied", { description: url });
     } catch {
-      flash("Copy failed");
+      toast.error("Couldn't copy the link");
     }
   }
 
@@ -53,7 +36,7 @@ export function ShareButton({
       onClick={onClick}
       className="rounded-[var(--radius)] border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:border-[var(--gray-300)] hover:bg-subtle"
     >
-      {label}
+      Share
     </button>
   );
 }

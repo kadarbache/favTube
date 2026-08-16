@@ -2,6 +2,7 @@
 
 import { useOptimistic, useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { followUser, unfollowUser } from "@/lib/actions/follows";
 
 export function FollowButton({
@@ -19,7 +20,6 @@ export function FollowButton({
   const [following, setFollowing] = useState(initialFollowing);
   const [optimistic, setOptimistic] = useOptimistic(following);
   const [, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
 
   function onClick() {
     // Signed-out visitors still see the button; it sends them to sign in and
@@ -29,35 +29,30 @@ export function FollowButton({
       return;
     }
 
-    setError(null);
     startTransition(async () => {
       const next = !following;
       setOptimistic(next);
       const result = next
         ? await followUser(targetUserId, targetUsername)
         : await unfollowUser(targetUserId, targetUsername);
-      if (result.ok) {
-        setFollowing(next);
-      } else {
-        setError(result.error);
-      }
+      // No toast on success: the button label already flipped, and one per
+      // click would be noise.
+      if (result.ok) setFollowing(next);
+      else toast.error(result.error);
     });
   }
 
   return (
-    <div className="flex flex-col items-end gap-1">
-      <button
-        type="button"
-        onClick={onClick}
-        className={`rounded-[var(--radius)] px-5 py-2.5 text-sm font-medium transition-colors ${
-          signedIn && optimistic
-            ? "bg-subtle text-foreground hover:bg-[var(--gray-200)]"
-            : "bg-primary text-[var(--primary-foreground)] hover:bg-[var(--primary-hover)]"
-        }`}
-      >
-        {signedIn && optimistic ? "Following" : "Follow"}
-      </button>
-      {error && <span className="text-[12px] text-primary">{error}</span>}
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-[var(--radius)] px-5 py-2.5 text-sm font-medium transition-colors ${
+        signedIn && optimistic
+          ? "bg-subtle text-foreground hover:bg-[var(--gray-200)]"
+          : "bg-primary text-[var(--primary-foreground)] hover:bg-[var(--primary-hover)]"
+      }`}
+    >
+      {signedIn && optimistic ? "Following" : "Follow"}
+    </button>
   );
 }

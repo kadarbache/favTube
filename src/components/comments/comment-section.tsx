@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
   postComment,
   deleteComment,
@@ -38,22 +39,23 @@ export function CommentSection({
   const [draft, setDraft] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   function onPost() {
     const text = draft.trim();
     if (!text) return;
-    setError(null);
     startTransition(async () => {
       const result = await postComment(profileUserId, profileUsername, text);
-      if (result.ok) setDraft("");
-      else setError(result.error);
+      if (result.ok) {
+        setDraft("");
+        toast.success("Feedback posted");
+      } else {
+        toast.error(result.error);
+      }
     });
   }
 
   function onStartReply(commentId: string) {
-    setError(null);
     setReplyDraft("");
     setReplyingTo(commentId);
   }
@@ -61,7 +63,6 @@ export function CommentSection({
   function onReply(commentId: string) {
     const text = replyDraft.trim();
     if (!text) return;
-    setError(null);
     startTransition(async () => {
       const result = await postComment(
         profileUserId,
@@ -72,25 +73,27 @@ export function CommentSection({
       if (result.ok) {
         setReplyDraft("");
         setReplyingTo(null);
+        toast.success("Reply posted");
       } else {
-        setError(result.error);
+        toast.error(result.error);
       }
     });
   }
 
   function onLike(commentId: string) {
-    setError(null);
+    // Like has no success toast for the same reason Follow doesn't: the count
+    // and the filled heart already moved.
     startTransition(async () => {
       const result = await toggleCommentLike(commentId, profileUsername);
-      if (!result.ok) setError(result.error);
+      if (!result.ok) toast.error(result.error);
     });
   }
 
   function onDelete(commentId: string) {
-    setError(null);
     startTransition(async () => {
       const result = await deleteComment(commentId, profileUsername);
-      if (!result.ok) setError(result.error);
+      if (result.ok) toast.success("Comment deleted");
+      else toast.error(result.error);
     });
   }
 
@@ -133,8 +136,6 @@ export function CommentSection({
           Sign in to leave feedback on this list.
         </p>
       )}
-
-      {error && <p className="mb-4 text-sm text-primary">{error}</p>}
 
       {comments.length === 0 ? (
         <p className="text-sm text-muted">

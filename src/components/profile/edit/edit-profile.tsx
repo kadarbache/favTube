@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { updateProfile } from "@/lib/actions/profile";
 import { NAME_MAX_LENGTH, BIO_MAX_LENGTH } from "@/lib/constants";
 
@@ -18,32 +19,29 @@ export function EditProfile({
   const [savedBio, setSavedBio] = useState(bio ?? "");
   const [draftName, setDraftName] = useState(name);
   const [draftBio, setDraftBio] = useState(bio ?? "");
-  const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   function onEdit() {
     setDraftName(savedName);
     setDraftBio(savedBio);
-    setError(null);
     setEditing(true);
   }
 
   function onCancel() {
-    setError(null);
     setEditing(false);
   }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     startTransition(async () => {
       const result = await updateProfile(draftName, draftBio, username);
       if (result.ok) {
         setSavedName(draftName.trim());
         setSavedBio(draftBio.trim());
         setEditing(false);
+        toast.success("Profile updated");
       } else {
-        setError(result.error);
+        toast.error(result.error);
       }
     });
   }
@@ -112,7 +110,6 @@ export function EditProfile({
           {draftBio.length}/{BIO_MAX_LENGTH}
         </span>
       </div>
-      {error && <p className="text-[12.5px] text-primary">{error}</p>}
     </form>
   );
 }

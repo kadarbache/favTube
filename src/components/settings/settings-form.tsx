@@ -3,6 +3,7 @@
 import { useOptimistic, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 import { setProfilePrivacy, updateUsername } from "@/lib/actions/profile";
 import { signOut } from "@/lib/auth-client";
 import { Avatar } from "@/components/ui/avatar";
@@ -25,15 +26,12 @@ export function SettingsForm({
 
   const [savedUsername, setSavedUsername] = useState(username);
   const [draftUsername, setDraftUsername] = useState(username);
-  const [usernameError, setUsernameError] = useState<string | null>(null);
-  const [usernameSaved, setUsernameSaved] = useState(false);
   const [savingUsername, startUsernameTransition] = useTransition();
 
   const [priv, setPriv] = useState(isPrivate);
   // Optimistic so the checkbox answers the click immediately; it rolls back on
   // its own if the action rejects, since `priv` never moved.
   const [optimisticPrivate, setOptimisticPrivate] = useOptimistic(priv);
-  const [privacyError, setPrivacyError] = useState<string | null>(null);
   const [, startPrivacyTransition] = useTransition();
 
   const [signingOut, setSigningOut] = useState(false);
@@ -45,30 +43,40 @@ export function SettingsForm({
 
   function onUsernameSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setUsernameError(null);
-    setUsernameSaved(false);
     startUsernameTransition(async () => {
       const result = await updateUsername(draftUsername);
       if (result.ok) {
         setSavedUsername(result.username);
         setDraftUsername(result.username);
-        setUsernameSaved(true);
+        toast.success("Username updated", {
+          description: `Your profile now lives at favtube.com/u/${result.username}.`,
+        });
         // The nav's Profile link and every /u/… path key off the handle, so the
         // session the nav is holding is stale until this refetches.
         router.refresh();
       } else {
-        setUsernameError(result.error);
+        toast.error(result.error);
       }
     });
   }
 
   function onPrivacyChange(next: boolean) {
-    setPrivacyError(null);
     startPrivacyTransition(async () => {
       setOptimisticPrivate(next);
       const result = await setProfilePrivacy(next);
-      if (result.ok) setPriv(next);
-      else setPrivacyError(result.error);
+      if (result.ok) {
+        setPriv(next);
+        toast.success(
+          next ? "Your profile is private now" : "Your profile is public now",
+          {
+            description: next
+              ? "Only you can see it until you turn this off."
+              : "It's back in Discover and open to visitors.",
+          },
+        );
+      } else {
+        toast.error(result.error);
+      }
     });
   }
 
@@ -105,11 +113,7 @@ export function SettingsForm({
           <input
             id="username"
             value={draftUsername}
-            onChange={(e) => {
-              setDraftUsername(e.target.value);
-              setUsernameError(null);
-              setUsernameSaved(false);
-            }}
+            onChange={(e) => setDraftUsername(e.target.value)}
             maxLength={USERNAME_MAX_LENGTH}
             autoComplete="off"
             spellCheck={false}
@@ -128,18 +132,10 @@ export function SettingsForm({
             </button>
           )}
         </div>
-        {usernameError ? (
-          <p className="text-[12.5px] text-primary">{usernameError}</p>
-        ) : usernameSaved ? (
-          <p className="text-[12.5px] text-muted">
-            Saved. Your profile now lives at favtube.com{profilePath}.
-          </p>
-        ) : (
-          <p className="text-[12.5px] text-muted">
-            Letters, numbers, underscores and periods. Changing it changes your
-            profile link — old links stop working.
-          </p>
-        )}
+        <p className="text-[12.5px] text-muted">
+          Letters, numbers, underscores and periods. Changing it changes your
+          profile link — old links stop working.
+        </p>
       </form>
 
       <ChangePassword hasPassword={hasPassword} />
@@ -183,9 +179,6 @@ export function SettingsForm({
             </span>
           </span>
         </label>
-        {privacyError && (
-          <p className="text-[12.5px] text-primary">{privacyError}</p>
-        )}
       </div>
 
       <div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 
@@ -44,22 +45,21 @@ function PasswordForm() {
   // Changing a password is the moment to boot whoever else is signed in, so
   // this starts on.
   const [signOutOthers, setSignOutOthers] = useState(true);
+  // Only what's wrong with what you typed stays inline, beside the fields it
+  // refers to. How the request itself went is a toast.
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
   function edit(set: (value: string) => void) {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
       set(e.target.value);
       setError(null);
-      setDone(false);
     };
   }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setDone(false);
 
     // Caught here rather than server-side: the endpoint has no idea what the
     // confirm field is, and a too-short password shouldn't cost a round trip.
@@ -85,14 +85,18 @@ function PasswordForm() {
     setLoading(false);
 
     if (error) {
-      setError(messageFor(error));
+      toast.error(messageFor(error));
       return;
     }
 
     setCurrent("");
     setNext("");
     setConfirm("");
-    setDone(true);
+    toast.success("Password changed", {
+      description: signOutOthers
+        ? "Every other device was signed out."
+        : "Other devices are still signed in.",
+    });
   }
 
   return (
@@ -157,14 +161,7 @@ function PasswordForm() {
         >
           {loading ? "Changing…" : "Change password"}
         </button>
-        {error ? (
-          <span className="text-[12.5px] text-primary">{error}</span>
-        ) : done ? (
-          <span className="text-[12.5px] text-muted">
-            Password changed
-            {signOutOthers ? ", and other devices were signed out" : ""}.
-          </span>
-        ) : null}
+        {error && <span className="text-[12.5px] text-primary">{error}</span>}
       </div>
     </form>
   );
