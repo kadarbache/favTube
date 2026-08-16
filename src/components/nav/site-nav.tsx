@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { useSession, signOut } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 
 // Panel row on mobile (own radius and hover fill), plain inline item from `md`.
 // Each item draws a divider on its leading edge and the first one drops it, so
@@ -43,7 +43,6 @@ type SessionUser = { username?: string | null };
 
 export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
   const pathname = usePathname();
-  const router = useRouter();
   const { theme, resolvedTheme, setTheme } = useTheme();
   const { data: session, isPending } = useSession();
   const [atTop, setAtTop] = useState(true);
@@ -188,24 +187,8 @@ export function SiteNav({ initialUser }: { initialUser: SessionUser | null }) {
               <span className="dark:hidden">Dark</span>
               <span className="hidden dark:inline">Light</span>
             </button>
-            {user && (
-              <button
-                type="button"
-                onClick={async () => {
-                  await signOut();
-                  router.push("/");
-                  router.refresh();
-                }}
-                className={`${ROW_CLASS} ${DIMMED_CLASS}`}
-              >
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                Sign out
-              </button>
-            )}
+            {/* Signing out lives on /settings, next to the rest of the
+                account controls, rather than one stray click away in the nav. */}
           </nav>
 
           <div className="flex items-center gap-3 justify-self-end md:col-start-3">
