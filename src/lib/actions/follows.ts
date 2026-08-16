@@ -19,6 +19,17 @@ export async function followUser(
     return { ok: false, error: "You can't follow yourself." };
   }
 
+  // Same reason the comment action checks it: this endpoint is reachable
+  // without the profile page that hides private profiles.
+  const target = await prisma.user.findUnique({
+    where: { id: targetUserId },
+    select: { isPrivate: true },
+  });
+  if (!target) return { ok: false, error: "That profile no longer exists." };
+  if (target.isPrivate) {
+    return { ok: false, error: "That profile is private." };
+  }
+
   // Idempotent: a double-click that races past the optimistic UI is a no-op,
   // not an error.
   await prisma.follow.createMany({

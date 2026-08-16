@@ -14,7 +14,11 @@ export const metadata: Metadata = {
 async function getProfiles() {
   try {
     return await prisma.user.findMany({
-      where: { username: { not: null }, videoEntries: { some: {} } },
+      where: {
+        username: { not: null },
+        isPrivate: false,
+        videoEntries: { some: {} },
+      },
       orderBy: { videoEntries: { _count: "desc" } },
       take: 48,
       select: {

@@ -26,6 +26,18 @@ export async function postComment(
     return { ok: false, error: "That comment is too long." };
   }
 
+  // A server action is a POST endpoint like any other, so the page's private
+  // gate doesn't cover this path: check the profile itself. The owner can still
+  // reply to feedback left before they went private.
+  const profileUser = await prisma.user.findUnique({
+    where: { id: profileUserId },
+    select: { isPrivate: true },
+  });
+  if (!profileUser) return { ok: false, error: "That profile no longer exists." };
+  if (profileUser.isPrivate && userId !== profileUserId) {
+    return { ok: false, error: "That profile is private." };
+  }
+
   // Owners can't leave fresh feedback on their own profile, only reply to
   // comments other people left.
   if (userId === profileUserId) {

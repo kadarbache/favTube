@@ -32,11 +32,17 @@ async function getShowcase() {
   try {
     const [profileCount, videoCount, commentCount, featured] =
       await Promise.all([
-        prisma.user.count({ where: { username: { not: null } } }),
+        // Private profiles aren't published, so they're neither counted here
+        // nor eligible to be the profile this page shows off.
+        prisma.user.count({ where: { username: { not: null }, isPrivate: false } }),
         prisma.videoEntry.count(),
         prisma.comment.count(),
         prisma.user.findFirst({
-          where: { username: { not: null }, videoEntries: { some: {} } },
+          where: {
+            username: { not: null },
+            isPrivate: false,
+            videoEntries: { some: {} },
+          },
           orderBy: { videoEntries: { _count: "desc" } },
           select: {
             name: true,

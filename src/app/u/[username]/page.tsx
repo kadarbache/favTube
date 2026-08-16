@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/actions/session";
@@ -20,13 +21,50 @@ export async function generateMetadata({
   const { username } = await params;
   const user = await prisma.user.findUnique({
     where: { username },
-    select: { name: true, bio: true },
+    select: { name: true, bio: true, isPrivate: true },
   });
   if (!user) return { title: "Profile not found — favTube" };
+  // A private profile's name and bio shouldn't leak through a link preview or
+  // a search result, so the metadata says nothing the URL doesn't already.
+  if (user.isPrivate) {
+    return {
+      title: "Private profile — favTube",
+      robots: { index: false, follow: false },
+    };
+  }
   return {
     title: `${user.name}'s top ten — favTube`,
     description: user.bio ?? `See ${user.name}'s ranked YouTube top ten.`,
   };
+}
+
+/** What everyone but the owner gets once a profile is switched to private. */
+function PrivateProfile({ username }: { username: string }) {
+  return (
+    <main className="mx-auto w-full max-w-[620px] flex-1 px-7 pt-14">
+      <div className="flex flex-col items-center gap-3 rounded-[var(--radius-2xl)] border border-border px-7 py-16 text-center">
+        <span className="mb-1 flex h-11 w-11 items-center justify-center rounded-[50%] bg-subtle text-muted">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="4" y="10" width="16" height="11" rx="2.5" />
+            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+          </svg>
+        </span>
+        <h1 className="text-[22px] font-semibold tracking-tight">
+          This profile is private
+        </h1>
+        <p className="max-w-[380px] text-[14.5px] leading-relaxed text-muted">
+          @{username} keeps their top ten to themselves. There&apos;s nothing to
+          see here unless they make it public.
+        </p>
+        <Link
+          href="/discover"
+          className="mt-3 rounded-[var(--radius)] border border-border px-4 py-2.5 text-[13px] font-medium transition-colors hover:border-[var(--gray-300)] hover:bg-subtle"
+        >
+          Browse public profiles
+        </Link>
+      </div>
+    </main>
+  );
 }
 
 export default async function ProfilePage({
@@ -42,6 +80,7 @@ export default async function ProfilePage({
       username: true,
       bio: true,
       profileViews: true,
+      isPrivate: true,
       videoEntries: { orderBy: { rank: "asc" } },
       _count: { select: { followers: true, following: true } },
     },
@@ -52,6 +91,12 @@ export default async function ProfilePage({
   const session = await getSession();
   const viewerId = session?.user?.id ?? null;
   const isOwner = viewerId === profile.id;
+
+  // The gate sits ahead of the comment and follow queries so a private profile
+  // costs one lookup, not four — and so nothing private is ever fetched.
+  if (profile.isPrivate && !isOwner) {
+    return <PrivateProfile username={profile.username} />;
+  }
 
   const [comments, isFollowing] = await Promise.all([
     prisma.comment.findMany({
@@ -104,6 +149,23 @@ export default async function ProfilePage({
 
   return (
     <main className="mx-auto w-full max-w-[1000px] flex-1 px-7 pt-14">
+      {/* Only the owner ever reaches this page while it's private, so the
+          banner needs no isOwner check of its own. */}
+      {profile.isPrivate && (
+        <div className="mb-8 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[var(--radius)] border border-border bg-subtle px-4 py-3 text-[13px]">
+          <span className="font-semibold">Your profile is private.</span>
+          <span className="text-muted">
+            Only you can see this page — visitors get a locked screen.
+          </span>
+          <Link
+            href="/settings"
+            className="font-medium underline-offset-4 transition-colors hover:text-primary hover:underline"
+          >
+            Make it public
+          </Link>
+        </div>
+      )}
+
       <div className="flex flex-wrap items-start gap-6">
         <Avatar className="h-[84px] w-[84px]" />
         {isOwner ? (
