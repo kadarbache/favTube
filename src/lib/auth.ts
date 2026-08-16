@@ -37,6 +37,15 @@ export const auth = betterAuth({
     additionalFields: {
       bio: { type: "string", required: false },
     },
+    // Off by default in better-auth — /delete-user 404s until this is set.
+    // With no sendDeleteAccountVerification configured (there's no mailer in
+    // this app), the endpoint deletes straight away: it takes the password as
+    // proof for credential users, and falls back to session freshness for
+    // everyone else. The schema's onDelete: Cascade takes the videos, follows
+    // and comments down with the row.
+    deleteUser: {
+      enabled: true,
+    },
   },
   // nextCookies must be last so its cookie-setting hook wraps every other plugin's response.
   plugins: [username(), nextCookies()],

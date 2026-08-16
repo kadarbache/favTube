@@ -7,6 +7,7 @@ import { setProfilePrivacy, updateUsername } from "@/lib/actions/profile";
 import { signOut } from "@/lib/auth-client";
 import { Avatar } from "@/components/ui/avatar";
 import { ChangePassword } from "@/components/settings/change-password";
+import { DeleteAccount } from "@/components/settings/delete-account";
 import { USERNAME_MAX_LENGTH } from "@/lib/constants";
 
 export function SettingsForm({
@@ -197,6 +198,10 @@ export function SettingsForm({
           {signingOut ? "Signing out…" : "Sign out"}
         </button>
       </div>
+
+      {/* Uses the saved handle, not the draft, so an unsaved edit in the
+          username field can't change what has to be typed to confirm. */}
+      <DeleteAccount username={savedUsername} hasPassword={hasPassword} />
     </div>
   );
 }
