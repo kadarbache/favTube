@@ -48,10 +48,13 @@ export default function PrivacyPage() {
           favTube currently shows the same default avatar.
         </P>
         <P>
-          <strong>What we collect automatically.</strong> When you sign in we
-          record your IP address and browser user-agent string against that
-          session, so you can see and end your own sessions and so we can spot
-          abuse. Sessions expire after 7 days, and the record goes with them.
+          <strong>What we collect automatically.</strong> When you sign in, the
+          authentication library favTube is built on records your IP address and
+          browser user-agent against that session. It writes these by default as
+          standard security information; favTube does not currently show them to
+          you or use them for anything. Sessions expire after 7 days and these
+          records go with them. Your IP address is also used in passing to rate
+          limit repeated sign-in attempts, which does not involve storing it.
         </P>
         <Callout>
           <strong>Your username may come from your email address.</strong> If
