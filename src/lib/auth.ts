@@ -32,6 +32,21 @@ export const auth = betterAuth({
         },
       },
     },
+    session: {
+      create: {
+        // better-auth stamps every session with the caller's IP and user agent.
+        // Nothing in favTube ever reads either one, so keeping them is personal
+        // data held for no purpose — drop them on the way in.
+        //
+        // This is deliberately not `advanced.ipAddress.disableIpTracking`: that
+        // switch also stops better-auth deriving an IP for rate limiting, which
+        // we do want. Rate limiting works off the request headers, so blanking
+        // the stored columns here leaves it untouched.
+        before: async (session) => ({
+          data: { ...session, ipAddress: "", userAgent: "" },
+        }),
+      },
+    },
   },
   user: {
     additionalFields: {

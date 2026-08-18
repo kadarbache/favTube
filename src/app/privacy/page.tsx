@@ -48,13 +48,14 @@ export default function PrivacyPage() {
           favTube currently shows the same default avatar.
         </P>
         <P>
-          <strong>What we collect automatically.</strong> When you sign in, the
-          authentication library favTube is built on records your IP address and
-          browser user-agent against that session. It writes these by default as
-          standard security information; favTube does not currently show them to
-          you or use them for anything. Sessions expire after 7 days and these
-          records go with them. Your IP address is also used in passing to rate
-          limit repeated sign-in attempts, which does not involve storing it.
+          <strong>What we collect automatically.</strong> Close to nothing. When
+          you sign in we store a session — a random token and an expiry date,
+          which is what keeps you signed in for 7 days. Your IP address is used
+          in passing to rate limit repeated sign-in attempts, but it is not
+          written to our database: the authentication library favTube uses would
+          store your IP address and browser user-agent on every session by
+          default, and we deliberately blank both, because we had no use for
+          them.
         </P>
         <Callout>
           <strong>Your username may come from your email address.</strong> If
@@ -71,9 +72,10 @@ export default function PrivacyPage() {
           This is short, and true. favTube runs <strong>no analytics</strong>,
           no advertising, no tracking pixels, no fingerprinting, and no
           third-party error tracking. There is no Google Analytics, no
-          Vercel Analytics, no PostHog, no Meta pixel, and no Sentry. We do not
-          build profiles of you, and we do not sell, rent, or trade your
-          personal information to anyone, for any purpose.
+          Vercel Analytics, no PostHog, no Meta pixel, and no Sentry. We keep no
+          log of your IP address and no record of which browser or device you
+          used. We do not build profiles of you, and we do not sell, rent, or
+          trade your personal information to anyone, for any purpose.
         </P>
         <P>
           The &quot;profile views&quot; counter shown on profile pages is not
