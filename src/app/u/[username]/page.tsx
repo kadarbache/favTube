@@ -14,6 +14,7 @@ import {
 } from "@/components/comments/comment-section";
 import { relativeTime, formatCount } from "@/lib/utils/format";
 import { Avatar } from "@/components/ui/avatar";
+import { refreshStaleMetadata } from "@/lib/video-metadata";
 
 export async function generateMetadata({
   params,
@@ -105,6 +106,16 @@ export default async function ProfilePage({
     return <PrivateProfile username={profile.username} />;
   }
 
+  // Google's developer policies cap cached YouTube data at 30 days, so a view
+  // is what keeps this profile's copy inside the window. Normally this is one
+  // indexed query that matches nothing; only a stale profile re-reads.
+  const videoEntries = (await refreshStaleMetadata(profile.id))
+    ? await prisma.videoEntry.findMany({
+        where: { userId: profile.id },
+        orderBy: { rank: "asc" },
+      })
+    : profile.videoEntries;
+
   const [comments, isFollowing] = await Promise.all([
     prisma.comment.findMany({
       where: { profileUserId: profile.id },
@@ -141,7 +152,7 @@ export default async function ProfilePage({
     replyToAuthorName: c.replyTo?.author.name ?? null,
   }));
 
-  const lastUpdated = profile.videoEntries.reduce<Date | null>(
+  const lastUpdated = videoEntries.reduce<Date | null>(
     (latest, entry) =>
       !latest || entry.updatedAt > latest ? entry.updatedAt : latest,
     null,
@@ -228,7 +239,7 @@ export default async function ProfilePage({
 
       {isOwner ? (
         <ManageTopTen
-          initialVideos={profile.videoEntries.map((v) => ({
+          initialVideos={videoEntries.map((v) => ({
             id: v.id,
             rank: v.rank,
             youtubeVideoId: v.youtubeVideoId,
@@ -239,13 +250,13 @@ export default async function ProfilePage({
             durationSeconds: v.durationSeconds,
           }))}
         />
-      ) : profile.videoEntries.length === 0 ? (
+      ) : videoEntries.length === 0 ? (
         <p className="rounded-[var(--radius)] border border-dashed border-border px-4 py-10 text-center text-sm text-muted">
           {profile.name} hasn&apos;t ranked any videos yet.
         </p>
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] gap-x-[18px] gap-y-[22px]">
-          {profile.videoEntries.map((v) => (
+          {videoEntries.map((v) => (
             <VideoCard key={v.id} video={v} />
           ))}
         </div>

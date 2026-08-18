@@ -61,15 +61,18 @@ export function parseIsoDuration(iso: string | undefined | null): number {
   );
 }
 
+type YoutubeApiItem = {
+  id?: string;
+  snippet?: {
+    title?: string;
+    channelTitle?: string;
+    thumbnails?: Record<string, { url?: string }>;
+  };
+  contentDetails?: { duration?: string };
+};
+
 type YoutubeApiResponse = {
-  items?: Array<{
-    snippet?: {
-      title?: string;
-      channelTitle?: string;
-      thumbnails?: Record<string, { url?: string }>;
-    };
-    contentDetails?: { duration?: string };
-  }>;
+  items?: YoutubeApiItem[];
 };
 
 function pickThumbnail(
@@ -85,20 +88,44 @@ function pickThumbnail(
 
 export class YoutubeLookupError extends Error {}
 
-export async function fetchVideoMetadata(
+function toMetadata(
+  item: YoutubeApiItem,
   videoId: string,
-): Promise<YoutubeVideoMetadata> {
+): YoutubeVideoMetadata {
+  return {
+    youtubeVideoId: videoId,
+    url: `https://www.youtube.com/watch?v=${videoId}`,
+    title: item.snippet?.title ?? "Untitled",
+    channelName: item.snippet?.channelTitle ?? "Unknown channel",
+    thumbnailUrl:
+      pickThumbnail(item.snippet?.thumbnails) ||
+      `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    durationSeconds: parseIsoDuration(item.contentDetails?.duration),
+  };
+}
+
+function videosEndpoint(ids: string, apiKey: string): URL {
+  const endpoint = new URL("https://www.googleapis.com/youtube/v3/videos");
+  endpoint.searchParams.set("part", "snippet,contentDetails");
+  endpoint.searchParams.set("id", ids);
+  endpoint.searchParams.set("key", apiKey);
+  return endpoint;
+}
+
+function requireApiKey(): string {
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) {
     throw new YoutubeLookupError("YouTube API key is not configured.");
   }
+  return apiKey;
+}
 
-  const endpoint = new URL("https://www.googleapis.com/youtube/v3/videos");
-  endpoint.searchParams.set("part", "snippet,contentDetails");
-  endpoint.searchParams.set("id", videoId);
-  endpoint.searchParams.set("key", apiKey);
-
-  const response = await fetch(endpoint, { cache: "no-store" });
+export async function fetchVideoMetadata(
+  videoId: string,
+): Promise<YoutubeVideoMetadata> {
+  const response = await fetch(videosEndpoint(videoId, requireApiKey()), {
+    cache: "no-store",
+  });
   if (!response.ok) {
     throw new YoutubeLookupError("Could not reach YouTube right now.");
   }
@@ -111,14 +138,41 @@ export async function fetchVideoMetadata(
     );
   }
 
-  return {
-    youtubeVideoId: videoId,
-    url: `https://www.youtube.com/watch?v=${videoId}`,
-    title: item.snippet?.title ?? "Untitled",
-    channelName: item.snippet?.channelTitle ?? "Unknown channel",
-    thumbnailUrl:
-      pickThumbnail(item.snippet?.thumbnails) ||
-      `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
-    durationSeconds: parseIsoDuration(item.contentDetails?.duration),
-  };
+  return toMetadata(item, videoId);
+}
+
+/** The Data API takes up to 50 comma-separated ids per `videos` call. */
+const MAX_IDS_PER_LOOKUP = 50;
+
+/**
+ * Look several videos up at once, for refreshing cached metadata. Unlike
+ * `fetchVideoMetadata` a missing video isn't an error here — an id absent from
+ * the returned map is one YouTube no longer serves (deleted or made private),
+ * which is exactly what the caller needs to know.
+ */
+export async function fetchVideoMetadataBatch(
+  videoIds: string[],
+): Promise<Map<string, YoutubeVideoMetadata>> {
+  const found = new Map<string, YoutubeVideoMetadata>();
+  if (videoIds.length === 0) return found;
+
+  const apiKey = requireApiKey();
+  for (let i = 0; i < videoIds.length; i += MAX_IDS_PER_LOOKUP) {
+    const chunk = videoIds.slice(i, i + MAX_IDS_PER_LOOKUP);
+    const response = await fetch(videosEndpoint(chunk.join(","), apiKey), {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      throw new YoutubeLookupError("Could not reach YouTube right now.");
+    }
+
+    const data = (await response.json()) as YoutubeApiResponse;
+    for (const item of data.items ?? []) {
+      // The API omits ids it can't serve rather than returning a placeholder,
+      // so whatever comes back is live and whatever doesn't is gone.
+      if (item.id) found.set(item.id, toMetadata(item, item.id));
+    }
+  }
+
+  return found;
 }

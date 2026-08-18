@@ -103,9 +103,14 @@ model VideoEntry {
   durationSeconds Int
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  // The title/channel/thumbnail/duration above are cached from the YouTube Data
+  // API, and Google's developer policies cap that cache at 30 calendar days.
+  // This is when we last heard from the API — see refreshStaleMetadata().
+  metadataFetchedAt DateTime @default(now())
 
   @@unique([userId, rank])
   @@unique([userId, youtubeVideoId])
+  @@index([metadataFetchedAt])
   @@map("video_entry")
 }
 
