@@ -87,6 +87,24 @@ export default function SignUpPage() {
 
         <GoogleButton label="Sign up with Google" />
 
+        <p className="text-center text-[13px] leading-relaxed text-muted">
+          By creating an account you agree to our{" "}
+          <Link
+            href="/terms"
+            className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+          >
+            Terms of use
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy"
+            className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+          >
+            Privacy policy
+          </Link>
+          .
+        </p>
+
         <p className="text-center text-sm text-zinc-500">
           Already have an account?{" "}
           <Link href="/sign-in" className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline">
