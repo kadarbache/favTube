@@ -141,12 +141,11 @@ export default function PrivacyPage() {
         </P>
         <P>
           Google limits how long that copy may be kept to 30 days. Loading a
-          profile is what enforces the limit here: when a page is viewed,
-          anything cached for more than 25 days is fetched again from YouTube,
-          and any video YouTube no longer serves is deleted from our database
-          along with the top ten entry pointing at it. There is no background
-          job doing this on a timer, so a profile that nobody opens for months
-          keeps its copy until the next visit.
+          profile is what enforces that limit. When someone opens a profile,
+          favTube re-fetches anything cached for more than 25 days, and deletes
+          any video YouTube no longer serves along with the top ten entry
+          pointing at it. No background job does this on a timer, so a profile
+          nobody opens for months keeps its copy until the next visit.
         </P>
         <P>
           <strong>When anyone views or plays a video</strong>, that happens
@@ -333,7 +332,7 @@ export default function PrivacyPage() {
           other device.
         </P>
         <Callout>
-          <strong>An honest limit:</strong> favTube cannot send email. If there
+          <strong>An honest limit.</strong> favTube cannot send email. If there
           were ever a breach affecting your data, we could not email you about
           it. We would post a notice on the site, and would notify the relevant
           authority where the law requires it. It is also why there is no
