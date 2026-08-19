@@ -19,19 +19,21 @@ export default function TermsPage() {
   return (
     <LegalPage
       title="Terms of use"
-      lede="The rules for using favTube. Plain language, no tricks — please read them before you sign up."
+      lede="The rules for using favTube. Plain language, no tricks, and worth reading before you sign up."
     >
       <Section title="1. What favTube is">
         <P>
           favTube lets you publish a ranked top ten of your favorite YouTube
           videos as a public profile. Other people can browse profiles, follow
-          you, and leave feedback on your list.
+          you, leave feedback on your list, and like each other&apos;s comments.
+          You cannot leave feedback on your own profile, but you can reply to
+          feedback other people leave on it.
         </P>
         <P>
           favTube is a personal project, operated from Somaliland by an
-          individual. It is free to use. In these terms,{" "}
-          <strong>we</strong> and <strong>favTube</strong> mean that operator,
-          and <strong>you</strong> means you.
+          individual. It is free to use. In these terms, <strong>we</strong> and{" "}
+          <strong>favTube</strong> mean that operator, and <strong>you</strong>{" "}
+          means you.
         </P>
       </Section>
 
@@ -59,20 +61,27 @@ export default function TermsPage() {
           <strong>There is currently no password reset.</strong> favTube cannot
           send email yet, so if you signed up with an email address and password
           and then forget that password, we have no way to let you back in. If
-          this worries you, sign in with Google instead — Google can always
+          this worries you, sign in with Google instead. Google can always
           recover your access.
         </Callout>
         <P>
+          Accounts created through Google have no favTube password at all. There
+          is nothing to reset, and the password form in settings will tell you
+          there is nothing to change.
+        </P>
+        <P>
           Usernames are first come, first served, and you can change yours in
-          settings at any time. We may reclaim a username that impersonates
-          someone else, or one that is being used to mislead people.
+          settings at any time. They are case-insensitive, so two people cannot
+          hold the same handle in different capitalisations. We may reclaim a
+          username that impersonates someone else, or one that is being used to
+          mislead people.
         </P>
       </Section>
 
       <Section title="4. YouTube">
         <P>
           favTube is built on YouTube. It does not host, store, or serve any
-          video files — every video plays inside YouTube&apos;s own embedded
+          video files. Every video plays inside YouTube&apos;s own embedded
           player, and favTube keeps only the title, channel name, thumbnail, and
           duration of the videos you add.
         </P>
@@ -86,9 +95,11 @@ export default function TermsPage() {
         </Callout>
         <P>
           What you can watch, and whether a video stays available at all, is
-          decided by YouTube and by the people who upload to it — not by us. If
-          a video you ranked is deleted or made private on YouTube, it will
-          disappear from your top ten.
+          decided by YouTube and by the people who upload to it, not by us. If a
+          video you ranked is deleted or made private on YouTube, favTube drops
+          it from your top ten the next time your profile is loaded and closes
+          the gap in the ranking. We do not ask you first, and the entry cannot
+          be recovered.
         </P>
         <P>
           Our <A href="/privacy">privacy policy</A> explains what information
@@ -158,7 +169,10 @@ export default function TermsPage() {
         </P>
         <P>
           You can stop using favTube whenever you like and delete your account
-          yourself from settings.
+          yourself from settings. Deleting asks for your password first, happens
+          straight away, and cannot be undone. It also takes down the feedback
+          other people left on your profile. Our{" "}
+          <A href="/privacy">privacy policy</A> lists exactly what goes.
         </P>
       </Section>
 
@@ -177,25 +191,32 @@ export default function TermsPage() {
           </li>
         </UL>
         <P>
-          We will remove content that is clearly infringing. Note that favTube
-          does not host videos: to have a video itself taken down, you need to
-          go to <A href="https://www.youtube.com/t/terms">YouTube</A>, not to
-          us. We can only remove the entry pointing at it.
+          We will remove content that is clearly infringing. Remember that
+          favTube does not host videos. To have a video itself taken down you
+          need to go to <A href="https://www.youtube.com/t/terms">YouTube</A>,
+          not to us. We can only remove the entry pointing at it.
         </P>
       </Section>
 
       <Section title="9. Your profile is public by default">
         <P>
-          When your profile is public, anyone on the internet can see your
-          name, username, bio, your ranked videos, and the whole comment thread
-          on your profile — including the names of everyone who commented. They
-          do not need a favTube account, and search engines can index the page.
+          When your profile is public, anyone on the internet can see your name,
+          username, bio, your ranked videos, your follower and following counts,
+          and the whole comment thread on your profile, including the names of
+          everyone who commented. They do not need a favTube account, and search
+          engines can index the page.
+        </P>
+        <P>
+          A public profile with at least one ranked video can also be listed on
+          the discover page, and whichever public profile has ranked the most
+          videos is the one the homepage shows off as an example. Neither is
+          something you opt into.
         </P>
         <P>
           You can switch your profile to private in settings. That hides it from
-          everyone but you, keeps it out of the discover page, and asks search
-          engines not to index it. It does not delete anything, and it cannot
-          claw back copies of pages that were already public.
+          everyone but you, keeps it out of the discover page and the homepage,
+          and asks search engines not to index it. It does not delete anything,
+          and it cannot claw back copies of pages that were already public.
         </P>
       </Section>
 
@@ -220,8 +241,8 @@ export default function TermsPage() {
         <P>
           We are also not responsible for YouTube content, for its availability,
           or for what other users post. Nothing in these terms limits liability
-          that cannot legally be limited — including for death or personal
-          injury caused by negligence, or for fraud.
+          that cannot legally be limited, including liability for death or
+          personal injury caused by negligence, or for fraud.
         </P>
       </Section>
 
@@ -239,20 +260,19 @@ export default function TermsPage() {
           We may update these terms. When we do, we will change the date at the
           top of this page, and for significant changes we will say so on the
           site. Because favTube cannot send email, this page is the only place
-          changes are announced — so it is worth a look now and then. Carrying
-          on using favTube after a change means you accept it.
+          changes are announced, so it is worth a look now and then. Carrying on
+          using favTube after a change means you accept it.
         </P>
       </Section>
 
       <Section title="14. Contact, and where we are">
         <P>
           favTube is operated from Somaliland. You can reach us at{" "}
-          <A href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</A> — for
-          questions about these terms, reports, takedowns, or anything about
-          your data.
+          <A href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</A> with questions
+          about these terms, reports, takedowns, or anything about your data.
         </P>
         <P>
-          If something goes wrong, please email us first — almost everything can
+          If something goes wrong, please email us first. Almost everything can
           be sorted out that way. These terms do not take away any rights you
           have under the consumer protection laws of the country you live in,
           and you can always bring a claim in your local courts.

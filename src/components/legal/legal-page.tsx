@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 /** Both documents carry one date so they're never seen to disagree. */
-export const LAST_UPDATED = "18 August 2026";
+export const LAST_UPDATED = "19 August 2026";
 
 /** Where data and takedown requests go. Also the footer's "Contact us". */
 export const CONTACT_EMAIL = "khadarbaashe35@gmail.com";
