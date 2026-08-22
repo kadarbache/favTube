@@ -11,9 +11,12 @@ export async function proxy(request: NextRequest) {
   if (!getSessionCookie(request)) return;
 
   const session = await auth.api.getSession({ headers: request.headers });
-  const username = (
-    session?.user as { username?: string | null } | undefined
-  )?.username;
+  // A stale cookie still passes the presence check above but resolves to no
+  // session here — without this, an expired cookie would redirect "/" away
+  // forever even though the visitor is actually signed out.
+  if (!session) return;
+
+  const username = (session.user as { username?: string | null }).username;
 
   return NextResponse.redirect(
     new URL(username ? `/u/${username}` : "/discover", request.url),
