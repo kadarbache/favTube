@@ -78,6 +78,10 @@ export default async function Home() {
     await getShowcase();
 
   const exampleHref = featured?.username ? `/u/${featured.username}` : "/discover";
+  const displayHost = (process.env.NEXT_PUBLIC_APP_URL ?? "favtube.com").replace(
+    /^https?:\/\//,
+    "",
+  );
 
   return (
     <main className="flex-1">
@@ -121,7 +125,7 @@ export default async function Home() {
             <span className="h-[9px] w-[9px] rounded-[50%] bg-[var(--gray-200)]" />
             <span className="h-[9px] w-[9px] rounded-[50%] bg-[var(--gray-200)]" />
             <span className="ml-3 text-xs text-muted">
-              favtube.com/{featured?.username ?? "yourname"}
+              {displayHost}/{featured?.username ?? "yourname"}
             </span>
           </div>
           <div className="px-7 pb-8 pt-7">
