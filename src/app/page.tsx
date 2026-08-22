@@ -37,8 +37,10 @@ async function getShowcase() {
         prisma.user.count({ where: { username: { not: null }, isPrivate: false } }),
         prisma.videoEntry.count(),
         prisma.comment.count(),
-        prisma.user.findFirst({
-          where: { username: "kadarbache" },
+        // Looked up by id, not username, since the username is user-editable
+        // and would otherwise silently break this once kadarbache renames.
+        prisma.user.findUnique({
+          where: { id: "Wu2dFFZTIJ9tcrAXiRamI3xVAnbjGjGc" },
           select: {
             name: true,
             username: true,
