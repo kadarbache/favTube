@@ -38,12 +38,7 @@ async function getShowcase() {
         prisma.videoEntry.count(),
         prisma.comment.count(),
         prisma.user.findFirst({
-          where: {
-            username: { not: null },
-            isPrivate: false,
-            videoEntries: { some: {} },
-          },
-          orderBy: { videoEntries: { _count: "desc" } },
+          where: { username: "kadarbache" },
           select: {
             name: true,
             username: true,
