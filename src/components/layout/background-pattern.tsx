@@ -10,6 +10,6 @@ export function BackgroundPattern() {
   if (pathname === "/") return null;
 
   return (
-    <StripedPattern className="fixed inset-0 z-0 h-full w-full stroke-[0.3] text-muted opacity-40 [stroke-dasharray:8,4]" />
+    <StripedPattern className="fixed inset-0 z-0 h-full w-full stroke-[0.3] text-muted opacity-30 [stroke-dasharray:8,4]" />
   );
 }
