@@ -39,8 +39,11 @@ async function getShowcase() {
         prisma.comment.count(),
         // Looked up by id, not username, since the username is user-editable
         // and would otherwise silently break this once kadarbache renames.
-        prisma.user.findUnique({
-          where: { id: "Wu2dFFZTIJ9tcrAXiRamI3xVAnbjGjGc" },
+        // isPrivate must still be checked here: private profiles are excluded
+        // from every listing (see the User model comment), and this hardcoded
+        // pick doesn't get to bypass that if the profile goes private later.
+        prisma.user.findFirst({
+          where: { id: "Wu2dFFZTIJ9tcrAXiRamI3xVAnbjGjGc", isPrivate: false },
           select: {
             name: true,
             username: true,
