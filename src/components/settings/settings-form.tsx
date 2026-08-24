@@ -11,6 +11,11 @@ import { ChangePassword } from "@/components/settings/change-password";
 import { DeleteAccount } from "@/components/settings/delete-account";
 import { USERNAME_MAX_LENGTH } from "@/lib/constants";
 
+const displayHost = (process.env.NEXT_PUBLIC_APP_URL ?? "favtube.com").replace(
+  /^https?:\/\//,
+  "",
+);
+
 export function SettingsForm({
   name,
   username,
@@ -100,7 +105,7 @@ export function SettingsForm({
             href={profilePath}
             className="truncate text-[13px] text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
-            favtube.com{profilePath}
+            {`${displayHost}${profilePath}`}
           </Link>
         </div>
       </div>
@@ -145,11 +150,10 @@ export function SettingsForm({
 
       <div className="flex flex-col gap-2">
         <label
-          className={`flex cursor-pointer gap-3 rounded-[var(--radius-2xl)] border p-4 transition-colors ${
-            optimisticPrivate
-              ? "border-[var(--gray-300)] bg-subtle"
-              : "border-border hover:border-[var(--gray-300)]"
-          }`}
+          className={`flex cursor-pointer gap-3 rounded-[var(--radius-2xl)] border p-4 transition-colors ${optimisticPrivate
+            ? "border-[var(--gray-300)] bg-subtle"
+            : "border-border hover:border-[var(--gray-300)]"
+            }`}
         >
           <input
             type="checkbox"
@@ -159,11 +163,10 @@ export function SettingsForm({
           />
           <span
             aria-hidden
-            className={`mt-[3px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--gray-300)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--gray-0)] ${
-              optimisticPrivate
-                ? "border-primary bg-primary text-[var(--primary-foreground)]"
-                : "border-[var(--gray-300)]"
-            }`}
+            className={`mt-[3px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--gray-300)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--gray-0)] ${optimisticPrivate
+              ? "border-primary bg-primary text-[var(--primary-foreground)]"
+              : "border-[var(--gray-300)]"
+              }`}
           >
             {optimisticPrivate && (
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
