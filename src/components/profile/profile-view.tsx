@@ -243,25 +243,30 @@ export async function ProfileView({
             )}
           </div>
         )}
-        <div className="flex items-start gap-2.5">
-          {isOwner && (
-            <Link
-              href={`/u/${profile.username}/preview`}
-              className="rounded-[var(--radius)] border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:border-[var(--gray-300)] hover:bg-subtle"
-            >
-              Preview
-            </Link>
-          )}
-          {!isOwner && (
-            <FollowButton
-              targetUserId={profile.id}
-              targetUsername={profile.username}
-              initialFollowing={Boolean(isFollowing)}
-              signedIn={Boolean(viewerId)}
-              // In preview the button is scenery, not a way to follow yourself.
-              disabled={preview}
-            />
-          )}
+        {/* Two rows: the things you do to a profile, then the verdict on it.
+            Right-aligned so the reaction pill's edge tracks Share's. */}
+        <div className="flex flex-col items-end gap-2.5">
+          <div className="flex items-start gap-2.5">
+            {isOwner && (
+              <Link
+                href={`/u/${profile.username}/preview`}
+                className="rounded-[var(--radius)] border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:border-[var(--gray-300)] hover:bg-subtle"
+              >
+                Preview
+              </Link>
+            )}
+            {!isOwner && (
+              <FollowButton
+                targetUserId={profile.id}
+                targetUsername={profile.username}
+                initialFollowing={Boolean(isFollowing)}
+                signedIn={Boolean(viewerId)}
+                // In preview the button is scenery, not a way to follow yourself.
+                disabled={preview}
+              />
+            )}
+            <ShareButton username={profile.username} name={profile.name} />
+          </div>
           {/* Shown to the owner too, inert: they can't vote on themselves, but
               hiding it would leave them unable to see their own score. */}
           <ReactionButtons
@@ -273,7 +278,6 @@ export async function ProfileView({
             signedIn={Boolean(viewerId)}
             disabled={isOwner || preview}
           />
-          <ShareButton username={profile.username} name={profile.name} />
         </div>
       </div>
 
