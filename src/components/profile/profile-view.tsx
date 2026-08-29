@@ -259,7 +259,7 @@ export async function ProfileView({
               <FollowButton
                 targetUserId={profile.id}
                 targetUsername={profile.username}
-                initialFollowing={Boolean(isFollowing)}
+                following={Boolean(isFollowing)}
                 signedIn={Boolean(viewerId)}
                 // In preview the button is scenery, not a way to follow yourself.
                 disabled={preview}
