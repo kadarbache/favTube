@@ -37,6 +37,9 @@ model User {
   commentsReceived Comment[]     @relation("CommentsReceived")
   commentLikes     CommentLike[]
 
+  reactionsGiven    ProfileReaction[] @relation("ReactionsGiven")
+  reactionsReceived ProfileReaction[] @relation("ReactionsReceived")
+
   @@unique([email])
   @@unique([username])
   @@map("user")
@@ -160,4 +163,28 @@ model CommentLike {
   @@unique([userId, commentId])
   @@index([commentId])
   @@map("comment_like")
+}
+
+enum ProfileReactionType {
+  LIKE
+  DISLIKE
+}
+
+// One row per (voter, profile) carrying which way they voted, rather than the
+// presence-based shape CommentLike uses: the unique pair is then what enforces
+// one vote per person, and flipping like to dislike is an update in place —
+// hence the updatedAt that CommentLike has no need for.
+model ProfileReaction {
+  id            String              @id @default(cuid())
+  userId        String
+  profileUserId String
+  type          ProfileReactionType
+  user          User                @relation("ReactionsGiven", fields: [userId], references: [id], onDelete: Cascade)
+  profileUser   User                @relation("ReactionsReceived", fields: [profileUserId], references: [id], onDelete: Cascade)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@unique([userId, profileUserId])
+  @@index([profileUserId])
+  @@map("profile_reaction")
 }

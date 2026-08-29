@@ -5,6 +5,7 @@ import { getSession } from "@/lib/actions/session";
 import { VideoCard } from "@/components/profile/video-card";
 import { FollowButton } from "@/components/profile/follow-button";
 import { ShareButton } from "@/components/profile/share-button";
+import { ReactionButtons } from "@/components/profile/reaction-buttons";
 import { ManageTopTen } from "@/components/profile/edit/manage-top-ten";
 import { EditProfile } from "@/components/profile/edit/edit-profile";
 import {
@@ -129,7 +130,7 @@ export async function ProfileView({
       })
     : profile.videoEntries;
 
-  const [comments, isFollowing] = await Promise.all([
+  const [comments, isFollowing, reactionTally, myReaction] = await Promise.all([
     prisma.comment.findMany({
       where: { profileUserId: profile.id },
       orderBy: { createdAt: "desc" },
@@ -150,7 +151,30 @@ export async function ProfileView({
           select: { id: true },
         })
       : Promise.resolve(null),
+    // groupBy rather than two filtered `_count`s: the same relation can't be
+    // counted twice under one select, and this way both sides cost one query.
+    prisma.profileReaction.groupBy({
+      by: ["type"],
+      where: { profileUserId: profile.id },
+      _count: true,
+    }),
+    viewerId
+      ? prisma.profileReaction.findUnique({
+          where: {
+            userId_profileUserId: {
+              userId: viewerId,
+              profileUserId: profile.id,
+            },
+          },
+          select: { type: true },
+        })
+      : Promise.resolve(null),
   ]);
+
+  const likeCount =
+    reactionTally.find((r) => r.type === "LIKE")?._count ?? 0;
+  const dislikeCount =
+    reactionTally.find((r) => r.type === "DISLIKE")?._count ?? 0;
 
   const commentData: CommentData[] = comments.map((c) => ({
     id: c.id,
@@ -238,6 +262,17 @@ export async function ProfileView({
               disabled={preview}
             />
           )}
+          {/* Shown to the owner too, inert: they can't vote on themselves, but
+              hiding it would leave them unable to see their own score. */}
+          <ReactionButtons
+            targetUserId={profile.id}
+            targetUsername={profile.username}
+            likeCount={likeCount}
+            dislikeCount={dislikeCount}
+            myReaction={myReaction?.type ?? null}
+            signedIn={Boolean(viewerId)}
+            disabled={isOwner || preview}
+          />
           <ShareButton username={profile.username} name={profile.name} />
         </div>
       </div>

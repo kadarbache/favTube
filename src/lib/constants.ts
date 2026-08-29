@@ -20,3 +20,8 @@ export type ActionResult = { ok: true } | { ok: false; error: string };
 export type UsernameResult =
   | { ok: true; username: string }
   | { ok: false; error: string };
+
+// Structurally the same as Prisma's generated ProfileReactionType, spelled out
+// here so the client component can type its props without importing the
+// generated client — and, like the above, because the action can't export it.
+export type ReactionType = "LIKE" | "DISLIKE";
