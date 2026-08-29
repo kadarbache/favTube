@@ -10,11 +10,14 @@ export function FollowButton({
   targetUsername,
   initialFollowing,
   signedIn,
+  disabled = false,
 }: {
   targetUserId: string;
   targetUsername: string;
   initialFollowing: boolean;
   signedIn: boolean;
+  /** Set on the owner's own preview, where the button is scenery. */
+  disabled?: boolean;
 }) {
   const router = useRouter();
   const [following, setFollowing] = useState(initialFollowing);
@@ -46,10 +49,11 @@ export function FollowButton({
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={`rounded-[var(--radius)] px-5 py-2.5 text-sm font-medium transition-colors ${
         signedIn && optimistic
-          ? "bg-subtle text-foreground hover:bg-[var(--gray-200)]"
-          : "bg-primary text-[var(--primary-foreground)] hover:bg-[var(--primary-hover)]"
+          ? "bg-subtle text-foreground enabled:hover:bg-[var(--gray-200)]"
+          : "bg-primary text-[var(--primary-foreground)] enabled:hover:bg-[var(--primary-hover)]"
       }`}
     >
       {signedIn && optimistic ? "Following" : "Follow"}
