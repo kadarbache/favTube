@@ -1,6 +1,6 @@
 "use client";
 
-import { useOptimistic, useState, useTransition } from "react";
+import { useOptimistic, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { setProfileReaction } from "@/lib/actions/reactions";
@@ -10,8 +10,10 @@ import type { ReactionType } from "@/lib/constants";
 type Tally = { mine: ReactionType | null; likes: number; dislikes: number };
 
 /**
- * Both counts move together when someone switches sides, so the whole tally is
- * one value rather than three pieces of state that could disagree mid-flight.
+ * The useOptimistic reducer. Both counts move together when someone switches
+ * sides, so the whole tally is one value rather than three pieces of state that
+ * could disagree mid-flight. Must stay pure — React replays it over fresh
+ * server data every time a vote is still in flight.
  */
 function vote(tally: Tally, next: ReactionType): Tally {
   // Clicking the side you already picked takes the vote back.
@@ -60,12 +62,18 @@ export function ReactionButtons({
   disabled?: boolean;
 }) {
   const router = useRouter();
-  const [tally, setTally] = useState<Tally>({
-    mine: myReaction,
-    likes: likeCount,
-    dislikes: dislikeCount,
-  });
-  const [optimistic, setOptimistic] = useOptimistic(tally);
+  // The props are the base state — no local copy. `setProfileReaction` ends in
+  // revalidatePath, so the server re-renders this component with the real
+  // numbers and React drops the optimistic overlay onto whatever came back.
+  // A vote by anyone else lands the same way, which a useState seeded once
+  // from props could never see.
+  const [optimistic, addVote] = useOptimistic(
+    { mine: myReaction, likes: likeCount, dislikes: dislikeCount },
+    // Reducer form: React replays every still-pending click over the newest
+    // base, so 👍 then 👎 before the first request lands composes correctly
+    // instead of the second one computing from pre-click numbers.
+    vote,
+  );
   const [, startTransition] = useTransition();
 
   function onVote(type: ReactionType) {
@@ -76,13 +84,15 @@ export function ReactionButtons({
       return;
     }
 
+    // Nothing here is awaited before the UI moves: addVote paints immediately
+    // and the request rides along inside the transition.
     startTransition(async () => {
-      const next = vote(tally, type);
-      setOptimistic(next);
+      addVote(type);
       const result = await setProfileReaction(targetUserId, targetUsername, type);
-      // No toast on success, same as Follow: the count already moved.
-      if (result.ok) setTally(next);
-      else toast.error(result.error);
+      // No toast on success, same as Follow: the count already moved. On
+      // failure there's no revalidation, so the overlay simply falls away and
+      // the counts snap back to the server's truth.
+      if (!result.ok) toast.error(result.error);
     });
   }
 
@@ -91,7 +101,9 @@ export function ReactionButtons({
   return (
     <div className="flex items-stretch overflow-hidden rounded-[var(--radius)] border border-border">
       {(["LIKE", "DISLIKE"] as const).map((type) => {
-        const active = signedIn && optimistic.mine === type;
+        // No signedIn guard needed: myReaction is null for a signed-out
+        // viewer, and a signed-out click never reaches addVote.
+        const active = optimistic.mine === type;
         const count = type === "LIKE" ? optimistic.likes : optimistic.dislikes;
         return (
           <button
